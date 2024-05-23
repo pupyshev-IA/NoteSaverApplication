@@ -6,6 +6,9 @@ namespace Abdt.Loyal.NoteSaver.Repository
 {
     public class NoteRepository : IRepository<Note>
     {
+        private static Dictionary<long, Note> _storage = new Dictionary<long, Note>();
+        private static long _currentId = 0;
+
         /// <inheritdoc />
         public Note Add(Note item)
         {
@@ -65,8 +68,5 @@ namespace Abdt.Loyal.NoteSaver.Repository
 
             return updatedNote;
         }
-
-        private static long _currentId = 0;
-        private static Dictionary<long, Note> _storage = new Dictionary<long, Note>();
     }
 }
