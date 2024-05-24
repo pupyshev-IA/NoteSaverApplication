@@ -7,8 +7,8 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions
         public ICollection<Note> GetAllNotes();
         public Note FindNoteByTitle(string title);
         public Note FindNoteByContent(string content);
-        public int AddNote(Note note);
+        public Note AddNote(Note note);
         public Note UpdateNote(Note note);
-        public bool DeleteNote(int id);
+        public void DeleteNote(int id);
     }
 }
