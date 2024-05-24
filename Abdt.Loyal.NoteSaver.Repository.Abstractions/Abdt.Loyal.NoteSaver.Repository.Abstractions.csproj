@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

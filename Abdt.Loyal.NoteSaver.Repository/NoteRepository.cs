@@ -10,7 +10,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
         private static long _currentId = 0;
 
         /// <inheritdoc />
-        public Note Add(Note item)
+        public long Add(Note item)
         {
             var currentDate = DateTimeOffset.Now;
             item.CreatedAt = currentDate;
@@ -22,7 +22,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
 
             _storage.Add(item.Id, item);
 
-            return item;
+            return item.Id;
         }
 
         /// <inheritdoc />

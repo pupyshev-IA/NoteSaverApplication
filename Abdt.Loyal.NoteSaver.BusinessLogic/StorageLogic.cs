@@ -7,42 +7,45 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
     public class StorageLogic : IStorageLogic
     {
         private readonly IRepository<Note> _repository;
-        private readonly INoteValidator _noteValidator;
 
-        public StorageLogic(IRepository<Note> repository, INoteValidator noteValidator)
+        public StorageLogic(IRepository<Note> repository)
         {
             _repository = repository;
-            _noteValidator = noteValidator;
         }
 
-        public Note AddNote(Note note)
+        public Note? AddNote(Note note)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(nameof(note));
+
+            return _repository.GetById(_repository.Add(note));
         }
 
-        public void DeleteNote(int id)
+        public void DeleteNote(long id)
         {
-            throw new NotImplementedException();
-        }
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
 
-        public Note FindNoteByContent(string content)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Note FindNoteByTitle(string title)
-        {
-            throw new NotImplementedException();
+            _repository.Delete(id);
         }
 
         public ICollection<Note> GetAllNotes()
         {
-            throw new NotImplementedException();
+            return _repository.GetAllItems();
         }
 
-        public Note UpdateNote(Note note)
+        public Note? GetNoteById(long id)
         {
-            throw new NotImplementedException();
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
+
+            return _repository.GetById(id);
+        }
+
+        public Note? UpdateNote(Note note)
+        {
+            ArgumentNullException.ThrowIfNull(nameof(note));
+
+            return _repository.Update(note);
         }
     }
 }

@@ -8,13 +8,20 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
         /// <inheritdoc />        
         public bool IsValid(Note note) 
         {
-            if (note.Id <= 0)
+            if (note == null)
                 return false;
 
-            if (string.IsNullOrWhiteSpace(note.Title))
-                return false;
 
-            return true;
+
+            return !IsValidId(note.Id) && string.IsNullOrWhiteSpace(note.Title)
+                ? false
+                : true;
+        }
+
+        /// <inheritdoc />
+        public bool IsValidId(long id)
+        {
+            return id > 0;
         }
     }
 }

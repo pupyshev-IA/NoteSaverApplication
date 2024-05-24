@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Возвращает добавленный элемент с проинициализированными служебными полями</returns>
-        public T Add(T item);
+        public long Add(T item);
 
         /// <summary>
         /// Обновляет элемент в хранилище.
