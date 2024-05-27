@@ -10,63 +10,75 @@ namespace Abdt.Loyal.NoteSaver.Repository
         private static long _currentId = 0;
 
         /// <inheritdoc />
-        public long Add(Note item)
+        public async Task<long> Add(Note item)
         {
-            var currentDate = DateTimeOffset.Now;
-            item.CreatedAt = currentDate;
-            item.UpdatedAt = currentDate;
+            return await Task.Run(() =>
+            {
+                var currentDate = DateTimeOffset.Now;
+                item.CreatedAt = currentDate;
+                item.UpdatedAt = currentDate;
 
-            _currentId++;
+                _currentId++;
 
-            item.Id = _currentId;
+                item.Id = _currentId;
 
-            _storage.Add(item.Id, item);
+                _storage.Add(item.Id, item);
 
-            return item.Id;
+                return item.Id;
+            });
         }
 
         /// <inheritdoc />
-        public void Delete(long id)
-        {
-            if (id <= 0)
-                throw new BelowZeroIdentifierException(id);
-
-            _storage.Remove(id);
-        }
-
-        /// <inheritdoc />
-        public ICollection<Note> GetAllItems()
-        {
-            return _storage.Values;
-        }
-
-        /// <inheritdoc />
-        public Note? GetById(long id)
+        public async Task Delete(long id)
         {
             if (id <= 0)
                 throw new BelowZeroIdentifierException(id);
 
-            if (_storage.TryGetValue(id, out var item))
-                return item;
-
-            return null;
+            await Task.Run(() => _storage.Remove(id));
         }
 
         /// <inheritdoc />
-        public Note? Update(Note item)
+        public async Task<ICollection<Note>> GetAllItems()
+        {
+            return await Task.Run(() =>
+            {
+                return _storage.Values;
+            });
+        }
+
+        /// <inheritdoc />
+        public async Task<Note?> GetById(long id)
+        {
+            if (id <= 0)
+                throw new BelowZeroIdentifierException(id);
+
+            return await Task.Run(() =>
+            {
+                if (_storage.TryGetValue(id, out var item))
+                    return item;
+
+                return null;
+            });
+        }
+
+        /// <inheritdoc />
+        public async Task<Note?> Update(Note item)
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
 
-            var updatedNote = GetById(item.Id);
+            return await Task.Run(() =>
+            {
+                var updatedNote = GetById(item.Id).Result;
 
-            if (updatedNote == null)
-                return null;
+                if (updatedNote == null)
+                    return null;
 
-            updatedNote.Title = item.Title;
-            updatedNote.Content = item.Content;
-            updatedNote.UpdatedAt = DateTimeOffset.Now;
+                updatedNote.Title = item.Title;
+                updatedNote.Content = item.Content;
+                updatedNote.UpdatedAt = DateTimeOffset.Now;
 
-            return updatedNote;
+                return updatedNote;
+            });
         }
     }
 }

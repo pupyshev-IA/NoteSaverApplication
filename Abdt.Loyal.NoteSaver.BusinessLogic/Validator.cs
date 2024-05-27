@@ -11,11 +11,7 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             if (note == null)
                 return false;
 
-
-
-            return !IsValidId(note.Id) && string.IsNullOrWhiteSpace(note.Title)
-                ? false
-                : true;
+            return !string.IsNullOrWhiteSpace(note.Title);
         }
 
         /// <inheritdoc />

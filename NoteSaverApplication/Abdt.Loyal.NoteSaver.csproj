@@ -14,4 +14,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions\Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions.csproj" />
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.BusinessLogic\Abdt.Loyal.NoteSaver.BusinessLogic.csproj" />
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Repository\Abdt.Loyal.NoteSaver.Repository.csproj" />
+  </ItemGroup>
+
 </Project>

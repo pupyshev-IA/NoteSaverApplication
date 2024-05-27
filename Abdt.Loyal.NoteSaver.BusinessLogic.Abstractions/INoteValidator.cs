@@ -8,7 +8,7 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions
         /// Проверяет правильность введенных данных
         /// </summary>
         /// <returns>Возвращает true если все данные введены верно и false если нет</returns>
-        public bool IsValid(Note note);
+        public bool IsValid(Note item);
 
         /// <summary>
         /// Проверяет правильность введенного идентификатора

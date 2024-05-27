@@ -1,13 +1,11 @@
-﻿using Abdt.Loyal.NoteSaver.Domain;
-
-namespace Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions
+﻿namespace Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions
 {
-    public interface IStorageLogic
+    public interface IStorageLogic<T>
     {
-        public ICollection<Note> GetAllNotes();
-        public Note? AddNote(Note note);
-        public Note? GetNoteById(long id);
-        public Note? UpdateNote(Note note);
-        public void DeleteNote(long id);
+        Task<ICollection<T>> GetAllNotes();
+        Task<long> AddNote(T note);
+        Task<T?> GetNoteById(long id);
+        Task<T?> UpdateNote(T note);
+        Task DeleteNote(long id);
     }
 }

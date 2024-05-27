@@ -4,7 +4,7 @@ using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 
 namespace Abdt.Loyal.NoteSaver.BusinessLogic
 {
-    public class StorageLogic : IStorageLogic
+    public class StorageLogic : IStorageLogic<Note>
     {
         private readonly IRepository<Note> _repository;
 
@@ -13,39 +13,39 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             _repository = repository;
         }
 
-        public Note? AddNote(Note note)
+        public async Task<long> AddNote(Note note)
         {
             ArgumentNullException.ThrowIfNull(nameof(note));
 
-            return _repository.GetById(_repository.Add(note));
+            return await _repository.Add(note);
         }
 
-        public void DeleteNote(long id)
+        public async Task DeleteNote(long id)
         {
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(nameof(id));
 
-            _repository.Delete(id);
+            await _repository.Delete(id);
         }
 
-        public ICollection<Note> GetAllNotes()
+        public async Task<ICollection<Note>> GetAllNotes()
         {
-            return _repository.GetAllItems();
+            return await _repository.GetAllItems();
         }
 
-        public Note? GetNoteById(long id)
+        public async Task<Note?> GetNoteById(long id)
         {
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(nameof(id));
 
-            return _repository.GetById(id);
+            return await _repository.GetById(id);
         }
 
-        public Note? UpdateNote(Note note)
+        public async Task<Note?> UpdateNote(Note note)
         {
             ArgumentNullException.ThrowIfNull(nameof(note));
 
-            return _repository.Update(note);
+            return await _repository.Update(note);
         }
     }
 }
