@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.19" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj" />
     <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Repository.Abstractions\Abdt.Loyal.NoteSaver.Repository.Abstractions.csproj" />
   </ItemGroup>

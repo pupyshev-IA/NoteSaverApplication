@@ -1,4 +1,6 @@
-﻿namespace Abdt.Loyal.NoteSaver.Repository.Abstractions
+﻿using Abdt.Loyal.NoteSaver.Domain;
+
+namespace Abdt.Loyal.NoteSaver.Repository.Abstractions
 {
     public interface IRepository<T> where T : class
     {
@@ -23,10 +25,10 @@
         Task Delete(long id);
 
         /// <summary>
-        /// Извлекает коллекцию элементов из хранилища.
+        /// Извлекает сведения по заданной странице.
         /// </summary>
-        /// <returns>Возвращает коллекцию элементов</returns>
-        Task<ICollection<T>> GetAllItems();
+        /// <returns>Возвращает страницу</returns>
+        Task<Page<T>> GetPage(ushort pageNumber, int itemsCount);
 
         /// <summary>
         /// Находит элемент по идентификатору в хранилище.

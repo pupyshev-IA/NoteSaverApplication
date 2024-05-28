@@ -1,42 +1,41 @@
 ﻿using Abdt.Loyal.NoteSaver.Domain;
 using Abdt.Loyal.NoteSaver.Domain.Exceptions;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 
 namespace Abdt.Loyal.NoteSaver.Repository
 {
-    public class NoteRepository //: IRepository<Note>
+    public class NoteDbRepository : IRepository<Note>
     {
-        private static ConcurrentDictionary<long, Note> _storage = new ConcurrentDictionary<long, Note>();
-        private static long _currentId = 0;
+        private NoteContext _noteContext;
 
-        /// <inheritdoc />
-        public Task<long> Add(Note item)
+        public NoteDbRepository(NoteContext context)
         {
-            return Task.Run(() =>
-            {
-                var currentDate = DateTimeOffset.Now;
-                item.CreatedAt = currentDate;
-                item.UpdatedAt = currentDate;
-
-                _currentId++;
-
-                item.Id = _currentId;
-
-                _storage.TryAdd(item.Id, item);
-
-                return item.Id;
-            });
+            _noteContext = context;
         }
 
         /// <inheritdoc />
-        public Task Delete(long id)
+        public async Task<long> Add(Note item)
+        {
+            var currentDate = DateTimeOffset.Now;
+            item.CreatedAt = currentDate;
+            item.UpdatedAt = currentDate;
+
+            await _noteContext.Notes.AddAsync(item);
+            await _noteContext.SaveChangesAsync();
+
+            return item.Id;
+        }
+
+        /// <inheritdoc />
+        public async Task Delete(long id)
         {
             if (id <= 0)
                 throw new BelowZeroIdentifierException(id);
 
-            return Task.Run(() => _storage.Remove(id, out var note));
+            _noteContext.Notes.Remove(new Note { Id = id });
+
+            await _noteContext.SaveChangesAsync();
         }
 
         /// <inheritdoc />
@@ -45,17 +44,13 @@ namespace Abdt.Loyal.NoteSaver.Repository
             if (id <= 0)
                 throw new BelowZeroIdentifierException(id);
 
-            return await Task.Run(() =>
-            {
-                if (_storage.TryGetValue(id, out var item))
-                    return item;
+            var note = await _noteContext.Notes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
-                return null;
-            });
+            return note;
         }
 
         /// <inheritdoc />
-        public Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
+        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
         {
             if (itemsCount > 100)
                 itemsCount = 100;
@@ -64,12 +59,12 @@ namespace Abdt.Loyal.NoteSaver.Repository
 
             var page = new Page<Note>()
             {
-                Items = GetItems(pageParams.ItemsToSkip, itemsCount),
+                Items = await GetItems(pageParams.ItemsToSkip, itemsCount),
                 AllItemsCount = GetAllItemsCount(),
                 CurrentPageNumber = pageParams.PageNumber
             };
 
-            return Task.FromResult(page);
+            return page;
         }
 
         /// <inheritdoc />
@@ -77,26 +72,19 @@ namespace Abdt.Loyal.NoteSaver.Repository
         {
             ArgumentNullException.ThrowIfNull(item, nameof(item));
 
-            return await Task.Run(() =>
-            {
-                var updatedNote = GetById(item.Id).Result;
+            item.UpdatedAt = DateTimeOffset.Now;
 
-                if (updatedNote == null)
-                    return null;
+            _noteContext.Update(item);
+            await _noteContext.SaveChangesAsync();
 
-                updatedNote.Title = item.Title;
-                updatedNote.Content = item.Content;
-                updatedNote.UpdatedAt = DateTimeOffset.Now;
-
-                return updatedNote;
-            });
+            return item;
         }
 
         /// <summary>
         /// Подсчитывает количество элементов.
         /// </summary>
         /// <returns>Количество элементов</returns>
-        private uint GetAllItemsCount() => Convert.ToUInt32(_storage.Count);
+        private uint GetAllItemsCount() => Convert.ToUInt32(_noteContext.Notes.Count());
 
         /// <summary>
         /// Высчитывает параметры страницы.
@@ -108,10 +96,10 @@ namespace Abdt.Loyal.NoteSaver.Repository
         {
             var itemsToSkip = (pageNumber - 1) * itemsCount;
 
-            if (_storage.Count - itemsToSkip > 0)
+            if (_noteContext.Notes.Count() - itemsToSkip > 0)
                 return (pageNumber, itemsToSkip);
 
-            ushort extraPages = (ushort)(Math.Abs(_storage.Count - itemsToSkip) / itemsCount + 1);
+            ushort extraPages = (ushort)(Math.Abs(_noteContext.Notes.Count() - itemsToSkip) / itemsCount + 1);
             ushort actualPage = (ushort)(pageNumber - extraPages);
 
             var newItemsToSkip = (actualPage - 1) * itemsCount;
@@ -125,13 +113,13 @@ namespace Abdt.Loyal.NoteSaver.Repository
         /// <param name="itemsToSkip"></param>
         /// <param name="itemsCount"></param>
         /// <returns>Возвращает коллекцию элементов</returns>
-        private ICollection<Note> GetItems(int itemsToSkip, int itemsCount)
+        private async Task<ICollection<Note>> GetItems(int itemsToSkip, int itemsCount)
         {
-            var items = _storage
-                .Select(x => x.Value)
+            var items = await _noteContext.Notes
+                .AsNoTracking()
                 .Skip(itemsToSkip)
                 .Take(itemsCount)
-                .ToImmutableArray();
+                .ToArrayAsync();
 
             return items;
         }

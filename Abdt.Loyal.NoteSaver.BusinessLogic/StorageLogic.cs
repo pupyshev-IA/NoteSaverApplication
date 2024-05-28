@@ -13,7 +13,7 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             _repository = repository;
         }
 
-        public async Task<long> AddNote(Note note)
+        public async Task<Note> AddNote(Note note)
         {
             ArgumentNullException.ThrowIfNull(nameof(note));
 
@@ -28,9 +28,9 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             await _repository.Delete(id);
         }
 
-        public async Task<ICollection<Note>> GetAllNotes()
+        public async Task<Page<Note>> GetAllNotes(ushort pageNumber, int itemsCount)
         {
-            return await _repository.GetAllItems();
+            return await _repository.GetPage(pageNumber, itemsCount);
         }
 
         public async Task<Note?> GetNoteById(long id)
