@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver", "NoteSaverApplication\Abdt.Loyal.NoteSaver.csproj", "{2722EB23-EB5D-40BD-BE1B-A0EB55B92FA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver", "NoteSaverApplication\Abdt.Loyal.NoteSaver.csproj", "{2722EB23-EB5D-40BD-BE1B-A0EB55B92FA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.BusinessLogic", "Abdt.Loyal.NoteSaver.BusinessLogic\Abdt.Loyal.NoteSaver.BusinessLogic.csproj", "{976C51BC-92E6-4BA0-9DFE-3EE6628A5E52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.BusinessLogic", "Abdt.Loyal.NoteSaver.BusinessLogic\Abdt.Loyal.NoteSaver.BusinessLogic.csproj", "{976C51BC-92E6-4BA0-9DFE-3EE6628A5E52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions", "Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions\Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions.csproj", "{B14B0E06-E6B1-432B-A5DA-DDDB116C483F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions", "Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions\Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions.csproj", "{B14B0E06-E6B1-432B-A5DA-DDDB116C483F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Domain", "Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj", "{68583224-8193-455F-A514-BD60FA3518EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Domain", "Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj", "{68583224-8193-455F-A514-BD60FA3518EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Repository", "Abdt.Loyal.NoteSaver.Repository\Abdt.Loyal.NoteSaver.Repository.csproj", "{BED0C2E7-D3DF-4B45-820D-C065CCA480BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Repository", "Abdt.Loyal.NoteSaver.Repository\Abdt.Loyal.NoteSaver.Repository.csproj", "{BED0C2E7-D3DF-4B45-820D-C065CCA480BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Repository.Abstractions", "Abdt.Loyal.NoteSaver.Repository.Abstractions\Abdt.Loyal.NoteSaver.Repository.Abstractions.csproj", "{09B36B69-6CFD-411D-B3AB-D094FA243637}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Repository.Abstractions", "Abdt.Loyal.NoteSaver.Repository.Abstractions\Abdt.Loyal.NoteSaver.Repository.Abstractions.csproj", "{09B36B69-6CFD-411D-B3AB-D094FA243637}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9D69B536-3089-414C-96E7-407F3363ED6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{09B36B69-6CFD-411D-B3AB-D094FA243637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09B36B69-6CFD-411D-B3AB-D094FA243637}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09B36B69-6CFD-411D-B3AB-D094FA243637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D69B536-3089-414C-96E7-407F3363ED6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D69B536-3089-414C-96E7-407F3363ED6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D69B536-3089-414C-96E7-407F3363ED6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D69B536-3089-414C-96E7-407F3363ED6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

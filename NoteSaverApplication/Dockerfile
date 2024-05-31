@@ -7,16 +7,21 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["NoteSaverApplication/NoteSaverApplication.csproj", "NoteSaverApplication/"]
-RUN dotnet restore "NoteSaverApplication/NoteSaverApplication.csproj"
+COPY ["NoteSaverApplication/Abdt.Loyal.NoteSaver.csproj", "NoteSaverApplication/"]
+COPY ["Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions/Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions.csproj", "Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions/"]
+COPY ["Abdt.Loyal.NoteSaver.Domain/Abdt.Loyal.NoteSaver.Domain.csproj", "Abdt.Loyal.NoteSaver.Domain/"]
+COPY ["Abdt.Loyal.NoteSaver.BusinessLogic/Abdt.Loyal.NoteSaver.BusinessLogic.csproj", "Abdt.Loyal.NoteSaver.BusinessLogic/"]
+COPY ["Abdt.Loyal.NoteSaver.Repository.Abstractions/Abdt.Loyal.NoteSaver.Repository.Abstractions.csproj", "Abdt.Loyal.NoteSaver.Repository.Abstractions/"]
+COPY ["Abdt.Loyal.NoteSaver.Repository/Abdt.Loyal.NoteSaver.Repository.csproj", "Abdt.Loyal.NoteSaver.Repository/"]
+RUN dotnet restore "NoteSaverApplication/Abdt.Loyal.NoteSaver.csproj"
 COPY . .
 WORKDIR "/src/NoteSaverApplication"
-RUN dotnet build "NoteSaverApplication.csproj" -c Release -o /app/build
+RUN dotnet build "Abdt.Loyal.NoteSaver.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NoteSaverApplication.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Abdt.Loyal.NoteSaver.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NoteSaverApplication.dll"]
+ENTRYPOINT ["dotnet", "Abdt.Loyal.NoteSaver.dll"]

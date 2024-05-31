@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  abdt.loyal.notesaver:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
+    build:
+      context: .
+      dockerfile: NoteSaverApplication/Dockerfile

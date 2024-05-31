@@ -13,7 +13,7 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             _repository = repository;
         }
 
-        public async Task<Note> AddNote(Note note)
+        public async Task<long> AddNote(Note note)
         {
             ArgumentNullException.ThrowIfNull(nameof(note));
 
