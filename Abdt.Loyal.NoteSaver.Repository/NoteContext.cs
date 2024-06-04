@@ -11,5 +11,18 @@ namespace Abdt.Loyal.NoteSaver.Repository
         {
 
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Note>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(p => p.Id).ValueGeneratedOnAdd();
+                e.Property(p => p.Title).HasMaxLength(50);
+                e.Property(p => p.Content).HasMaxLength(2000);
+            });
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
