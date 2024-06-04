@@ -10,7 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connection = builder.Configuration.GetConnectionString("DbConnection");
+var connection = builder.Configuration.GetConnectionString("DbConnection");
+if (string.IsNullOrWhiteSpace(connection))
+    throw new ArgumentException(nameof(connection));
+
 builder.Services.AddDbContext<NoteContext>(options => options.UseNpgsql(connection));
 
 // Add services to the container.
@@ -31,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 
 app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>

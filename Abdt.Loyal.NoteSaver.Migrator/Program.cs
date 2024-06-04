@@ -13,4 +13,4 @@ var optionsBuilder = new DbContextOptionsBuilder<NoteContext>();
 optionsBuilder.UseNpgsql(connectionString);
 
 var context = new NoteContext(optionsBuilder.Options);
-context.Database.Migrate();
+await context.Database.MigrateAsync();

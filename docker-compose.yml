@@ -1,8 +1,40 @@
 version: '3.4'
 
 services:
+  postgres: 
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: "notesaver"
+      POSTGRES_PASSWORD: "qwerty"
+      POSTGRES_DB: "notesdb"
+    volumes:
+      - D:\NoteSaverDb:/data/db
+
   abdt.loyal.notesaver:
     image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
     build:
       context: .
       dockerfile: NoteSaverApplication/Dockerfile
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "5454:5454/tcp"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=some@email.com
+      - PGADMIN_DEFAULT_PASSWORD=somepassword
+      - PGADMIN_LISTEN_PORT=5454
+    depends_on:
+      - postgres
