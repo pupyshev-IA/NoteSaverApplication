@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Reposi
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9D69B536-3089-414C-96E7-407F3363ED6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Migrator", "Abdt.Loyal.NoteSaver.Migrator\Abdt.Loyal.NoteSaver.Migrator.csproj", "{26B5D82D-7253-493F-AEA1-DDA42FC9E345}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{9D69B536-3089-414C-96E7-407F3363ED6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D69B536-3089-414C-96E7-407F3363ED6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D69B536-3089-414C-96E7-407F3363ED6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
