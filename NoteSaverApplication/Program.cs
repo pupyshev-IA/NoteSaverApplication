@@ -7,6 +7,7 @@ using Abdt.Loyal.NoteSaver.DTO;
 using Abdt.Loyal.NoteSaver.Repository;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 using FluentValidation;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 
@@ -47,7 +48,7 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 
-app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
     var isValidId = id > 1;
 
@@ -55,27 +56,26 @@ app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IVali
         return Results.NotFound();
 
     var note = await logic.Get(id);
+    var adaptedNote = note.Adapt<NoteDtoOut>();
 
-    return Results.Ok(note);
-}).Produces<Note>()
+    return Results.Ok(adaptedNote);
+}).Produces<NoteDtoOut>()
   .Produces(404);
 
-app.MapPost("api/v1/notes/add", async (NoteDto noteDto, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+app.MapPost("api/v1/notes/add", async (NoteDto noteDto, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
-    logger.LogInformation("Endpoint for additing is called");
-
     var note = new Note() { Title = noteDto.Title, Content = noteDto.Content };
 
     if (!noteValidator.Validate(note).IsValid)
         return Results.UnprocessableEntity();
 
-    var addedNote = await logic.Add(note);
+    var addedNoteId = await logic.Add(note);
 
-    return Results.Created(new Uri("api/v1/notes/", UriKind.Relative), addedNote);
+    return Results.Created(new Uri("api/v1/notes/", UriKind.Relative), addedNoteId);
 }).Produces(201)
   .Produces(422);
 
-app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
     var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content };
     var validationResult = noteValidator.Validate(note);
@@ -85,14 +85,15 @@ app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLo
         return Results.UnprocessableEntity(validationResult.Errors);
 
     var updatedNote = await logic.Update(note);
+    var adaptedNote = updatedNote.Adapt<NoteDtoOut>();
 
-    return Results.Ok(updatedNote);
-}).Produces(200)
+    return Results.Ok(adaptedNote);
+}).Produces<NoteDtoOut>()
   .Produces(422);
 
-app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
-    var isValidId = id > 1;
+    var isValidId = id >= 1;
     if (!isValidId)
         return Results.NotFound();
 
@@ -102,15 +103,17 @@ app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> lo
 }).Produces(404)
   .Produces(204);
 
-app.MapGet("api/v1/notes/list", async (ushort pageNumber, int itemsCount, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+app.MapGet("api/v1/notes/list", async (ushort pageNumber, int itemsCount, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
     var noteList = await logic.GetPage(pageNumber, itemsCount);
 
-    return Results.Ok(noteList);
-}).Produces(200)
-  .Produces<Note>();
+    var page = noteList.Adapt<Page<NoteDtoOut>>();
 
-app.MapPost("api/v1/notes/addTest", async (ushort count, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
+    return Results.Ok(page);
+}).Produces(200)
+  .Produces<Page<NoteDtoOut>>();
+
+app.MapPost("api/v1/notes/addTest", async (ushort count, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
     foreach (var item in Enumerable.Range(0, count))
     {
