@@ -1,7 +1,9 @@
 ﻿using Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions;
 using Abdt.Loyal.NoteSaver.Domain;
+using Abdt.Loyal.NoteSaver.Domain.Options;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Abdt.Loyal.NoteSaver.BusinessLogic
 {
@@ -11,9 +13,9 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
         private readonly IRepository<Note> _repository;
         private readonly bool _isSoftDeleteEnabled;
 
-        public StorageLogic(ILogger<StorageLogic> logger, IRepository<Note> repository)
+        public StorageLogic(ILogger<StorageLogic> logger, IRepository<Note> repository, IOptions<LogicArgs> options)
         {
-            _isSoftDeleteEnabled = false;
+            _isSoftDeleteEnabled = options.Value.UseSoftDelete;
             _logger = logger;
             _repository = repository;
         }
