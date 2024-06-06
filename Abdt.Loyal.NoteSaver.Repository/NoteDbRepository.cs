@@ -2,11 +2,13 @@
 using Abdt.Loyal.NoteSaver.Domain.Exceptions;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Abdt.Loyal.NoteSaver.Repository
 {
     public class NoteDbRepository : IRepository<Note>
     {
+        private readonly Expression<Func<Note, bool>> _notDeleted = x => !x.IsDeleted;
         private NoteContext _noteContext;
 
         public NoteDbRepository(NoteContext context)
@@ -20,6 +22,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
             var currentDate = DateTimeOffset.Now;
             item.CreatedAt = currentDate;
             item.UpdatedAt = currentDate;
+            item.IsDeleted = false;
 
             await _noteContext.Notes.AddAsync(item);
             await _noteContext.SaveChangesAsync();
@@ -44,7 +47,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
             if (id <= 0)
                 throw new BelowZeroIdentifierException(id);
 
-            var note = await _noteContext.Notes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var note = await _noteContext.Notes.AsNoTracking().Where(_notDeleted).FirstOrDefaultAsync(x => x.Id == id);
 
             return note;
         }
@@ -84,7 +87,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
         /// Подсчитывает количество элементов.
         /// </summary>
         /// <returns>Количество элементов</returns>
-        private uint GetAllItemsCount() => Convert.ToUInt32(_noteContext.Notes.Count());
+        private uint GetAllItemsCount() => Convert.ToUInt32(_noteContext.Notes.Count(_notDeleted));
 
         /// <summary>
         /// Высчитывает параметры страницы.
@@ -96,10 +99,10 @@ namespace Abdt.Loyal.NoteSaver.Repository
         {
             var itemsToSkip = (pageNumber - 1) * itemsCount;
 
-            if (_noteContext.Notes.Count() - itemsToSkip > 0)
+            if (_noteContext.Notes.Count(_notDeleted) - itemsToSkip > 0)
                 return (pageNumber, itemsToSkip);
 
-            ushort extraPages = (ushort)(Math.Abs(_noteContext.Notes.Count() - itemsToSkip) / itemsCount + 1);
+            ushort extraPages = (ushort)(Math.Abs(_noteContext.Notes.Count(_notDeleted) - itemsToSkip) / itemsCount + 1);
             ushort actualPage = (ushort)(pageNumber - extraPages);
 
             var newItemsToSkip = (actualPage - 1) * itemsCount;
@@ -119,6 +122,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
                 .AsNoTracking()
                 .Skip(itemsToSkip)
                 .Take(itemsCount)
+                .Where(_notDeleted)
                 .ToArrayAsync();
 
             return items;

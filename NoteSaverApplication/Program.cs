@@ -7,8 +7,13 @@ using Abdt.Loyal.NoteSaver.Repository;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(LogLevel.Trace);
+builder.Host.UseNLog();
 
 var connection = builder.Configuration.GetConnectionString("DbConnection");
 if (string.IsNullOrWhiteSpace(connection))
@@ -37,7 +42,7 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 
-app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
     var isValidId = id > 1;
 
@@ -50,8 +55,10 @@ app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IVali
 }).Produces<Note>()
   .Produces(404);
 
-app.MapPost("api/v1/notes/add", async (NoteDto noteDto, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapPost("api/v1/notes/add", async (NoteDto noteDto, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
+    logger.LogInformation("Endpoint for additing is called");
+
     var note = new Note() { Title = noteDto.Title, Content = noteDto.Content };
 
     if (!noteValidator.Validate(note).IsValid)
@@ -63,7 +70,7 @@ app.MapPost("api/v1/notes/add", async (NoteDto noteDto, IStorageLogic<Note> logi
 }).Produces(201)
   .Produces(422);
 
-app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
     var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content };
     var validationResult = noteValidator.Validate(note);
@@ -78,7 +85,7 @@ app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLo
 }).Produces(200)
   .Produces(422);
 
-app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
     var isValidId = id > 1;
     if (!isValidId)
@@ -90,7 +97,7 @@ app.MapDelete("api/v1/notes/delete/{id}", async (long id, IStorageLogic<Note> lo
 }).Produces(404)
   .Produces(204);
 
-app.MapGet("api/v1/notes/list", async (ushort pageNumber, int itemsCount, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapGet("api/v1/notes/list", async (ushort pageNumber, int itemsCount, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
     var noteList = await logic.GetAllNotes(pageNumber, itemsCount);
 
@@ -98,7 +105,7 @@ app.MapGet("api/v1/notes/list", async (ushort pageNumber, int itemsCount, IStora
 }).Produces(200)
   .Produces<Note>();
 
-app.MapPost("api/v1/notes/addTest", async (ushort count, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
+app.MapPost("api/v1/notes/addTest", async (ushort count, IStorageLogic<Note> logic, IValidator<Note> noteValidator, ILogger<Program> logger) =>
 {
     foreach (var item in Enumerable.Range(0, count))
     {
