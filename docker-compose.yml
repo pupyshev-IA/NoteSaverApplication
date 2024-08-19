@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: "qwerty"
       POSTGRES_DB: "notesdb"
     volumes:
-      - D:\NoteSaverDb:/data/db
+      - C:\Users\PupyshevIA\source\NoteSaverDb:/data/db
 
   abdt.loyal.notesaver:
     image: ${DOCKER_REGISTRY-}abdtloyalnotesaver

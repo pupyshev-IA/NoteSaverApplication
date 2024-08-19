@@ -44,16 +44,15 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
 
             _logger.LogInformation("Deletion a note with id=\"{id}\"", id);
 
-            if (!_isSoftDeleteEnabled)
-                return _repository.Delete(id);
+            if (_isSoftDeleteEnabled)
+                return SoftDeleteOperation(id);
 
-            return SoftDeleteOperation(id);
+            return _repository.Delete(id);
         }
 
         public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
         {
             _logger.LogInformation("Getting a page number=\"{pageNumber}\" with \"{itemsCount}\" items", pageNumber, itemsCount);
-
             return await _repository.GetPage(pageNumber, itemsCount);
         }
 
@@ -62,7 +61,6 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             if (id <= 0)
             {
                 _logger.LogError("Unable to get a note with id=\"{id}\"", id);
-
                 throw new ArgumentOutOfRangeException(nameof(id));
             }
 
@@ -76,7 +74,6 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             if (note == null)
             {
                 _logger.LogError("Unable to update a note");
-
                 throw new ArgumentNullException(nameof(note));
             }
 
