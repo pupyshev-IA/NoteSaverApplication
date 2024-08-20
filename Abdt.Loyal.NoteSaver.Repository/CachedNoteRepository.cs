@@ -40,7 +40,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
 
         public Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
         {
-            string key = $"page-num:{pageNumber}&itemsCount{itemsCount}";
+            string key = $"page-num:{pageNumber}&itemsCount:{itemsCount}";
             return _cache.GetOrCreateAsync(
                 key,
                 entry =>
