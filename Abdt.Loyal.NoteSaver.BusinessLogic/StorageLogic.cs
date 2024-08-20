@@ -65,7 +65,6 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             }
 
             _logger.LogInformation("Getting specified note with id=\"{id}\"", id);
-
             return await _repository.GetById(id);
         }
 
