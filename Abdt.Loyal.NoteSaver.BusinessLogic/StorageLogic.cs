@@ -2,6 +2,7 @@
 using Abdt.Loyal.NoteSaver.Domain;
 using Abdt.Loyal.NoteSaver.Domain.Options;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -10,13 +11,15 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
     public class StorageLogic : IStorageLogic<Note>
     {
         private readonly ILogger<StorageLogic> _logger;
+        private readonly IMemoryCache _cache;
         private readonly IRepository<Note> _repository;
         private readonly bool _isSoftDeleteEnabled;
 
-        public StorageLogic(ILogger<StorageLogic> logger, IRepository<Note> repository, IOptions<LogicArgs> options)
+        public StorageLogic(ILogger<StorageLogic> logger, IMemoryCache cache, IRepository<Note> repository, IOptions<LogicArgs> options)
         {
             _isSoftDeleteEnabled = options.Value.UseSoftDelete;
             _logger = logger;
+            _cache = cache;
             _repository = repository;
         }
 
@@ -53,7 +56,20 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
         public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
         {
             _logger.LogInformation("Getting a page number=\"{pageNumber}\" with \"{itemsCount}\" items", pageNumber, itemsCount);
-            return await _repository.GetPage(pageNumber, itemsCount);
+            
+            string cacheKey = $"pageNum_{pageNumber}&itemsCount_{itemsCount}";
+            if (!_cache.TryGetValue(cacheKey, out Page<Note> page))
+            {
+                page = await _repository.GetPage(pageNumber, itemsCount);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300)
+                };
+                _cache.Set(cacheKey, page, cacheEntryOptions);
+            }
+
+            return page;
         }
 
         public async Task<Note?> Get(long id)
@@ -65,8 +81,20 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             }
 
             _logger.LogInformation("Getting specified note with id=\"{id}\"", id);
+            
+            string cacheKey = $"note_{id}";
+            if (!_cache.TryGetValue(cacheKey, out Note note))
+            {
+                note = await _repository.GetById(id);
 
-            return await _repository.GetById(id);
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(120)
+                };
+                _cache.Set(cacheKey, note, cacheEntryOptions);
+            }
+
+            return note;
         }
 
         public async Task<Note?> Update(Note note)

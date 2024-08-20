@@ -17,6 +17,8 @@ builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
 
+builder.Services.AddMemoryCache();
+
 var connection = builder.Configuration.GetConnectionString("DbConnection");
 if (string.IsNullOrWhiteSpace(connection))
     throw new ArgumentException(nameof(connection));
