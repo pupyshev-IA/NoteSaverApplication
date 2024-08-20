@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Abdt.Loyal.NoteSaver.Repository
 {
-    public class NoteRepository //: IRepository<Note>
+    public class NoteInMemoryRepository //: IRepository<Note>
     {
         private static ConcurrentDictionary<long, Note> _storage = new ConcurrentDictionary<long, Note>();
         private static long _currentId = 0;
