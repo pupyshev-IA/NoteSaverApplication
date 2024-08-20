@@ -45,12 +45,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 
 app.MapGet("api/v1/notes/{id}", async (long id, IStorageLogic<Note> logic, IValidator<Note> noteValidator) =>
 {
-    var isValidId = id > 1;
+    var isValidId = id >= 1;
 
     if (!isValidId)
         return Results.NotFound();
@@ -79,7 +79,7 @@ app.MapPut("api/v1/notes/update", async (NoteDtoUpdate noteDtoUpdate, IStorageLo
 {
     var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content };
     var validationResult = noteValidator.Validate(note);
-    var isValidId = note.Id > 1;
+    var isValidId = note.Id >= 1;
 
     if (!validationResult.IsValid || !isValidId)
         return Results.UnprocessableEntity(validationResult.Errors);
