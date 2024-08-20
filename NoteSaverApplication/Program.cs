@@ -47,6 +47,10 @@ builder.Services.AddOptions<LogicArgs>()
     .BindConfiguration("Flags")
     .ValidateDataAnnotations();
 
+builder.Services.AddOptions<RedisArgs>()
+    .BindConfiguration("RedisCacheSettings")
+    .ValidateDataAnnotations();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
