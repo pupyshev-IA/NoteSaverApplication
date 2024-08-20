@@ -13,6 +13,8 @@ using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMemoryCache();
+
 builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
@@ -23,16 +25,16 @@ if (string.IsNullOrWhiteSpace(dbConnection))
 
 builder.Services.AddDbContext<NoteContext>(options => options.UseNpgsql(dbConnection));
 
-var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
-var redisCacheSettings = builder.Configuration.GetSection("RedisCacheSettings");
-if (string.IsNullOrWhiteSpace(redisConnectionString))
-    throw new ArgumentException(nameof(redisConnectionString));
+//var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+//var redisCacheSettings = builder.Configuration.GetSection("RedisCacheSettings");
+//if (string.IsNullOrWhiteSpace(redisConnectionString))
+//    throw new ArgumentException(nameof(redisConnectionString));
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = redisConnectionString;
-    options.InstanceName = redisCacheSettings.GetValue<string>("InstanceName");
-});
+//builder.Services.AddStackExchangeRedisCache(options =>
+//{
+//    options.Configuration = redisConnectionString;
+//    options.InstanceName = redisCacheSettings.GetValue<string>("InstanceName");
+//});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -41,15 +43,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IStorageLogic<Note>, StorageLogic>();
 builder.Services.AddScoped<IValidator<Note>, Validator>();
-builder.Services.AddScoped<IRepository<Note>, NoteDbRepository>();
+//builder.Services.AddScoped<IRepository<Note>, NoteDbRepository>();
+
+builder.Services.AddScoped<NoteDbRepository>();
+builder.Services.AddScoped<IRepository<Note>, CachedNoteRepository>();
 
 builder.Services.AddOptions<LogicArgs>()
     .BindConfiguration("Flags")
     .ValidateDataAnnotations();
 
-builder.Services.AddOptions<RedisArgs>()
-    .BindConfiguration("RedisCacheSettings")
-    .ValidateDataAnnotations();
+//builder.Services.AddOptions<RedisArgs>()
+//    .BindConfiguration("RedisCacheSettings")
+//    .ValidateDataAnnotations();
 
 var app = builder.Build();
 
