@@ -26,6 +26,7 @@ services:
       - 5000
     depends_on:
       - postgres
+      - redis
 
   pgadmin:
     container_name: pgadmin
@@ -44,8 +45,9 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    expose:
+      - 6379
     environment:
-      - REDIS_PASSWORD=password
       - REDIS_PORT=6379
       - REDIS_DATABASES=5
     volumes:
@@ -57,3 +59,5 @@ services:
     restart: always 
     ports: 
       - 8001:8001
+    depends_on:
+      - redis
