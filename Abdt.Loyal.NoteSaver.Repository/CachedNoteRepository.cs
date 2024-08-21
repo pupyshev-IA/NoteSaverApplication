@@ -1,6 +1,8 @@
 ﻿using Abdt.Loyal.NoteSaver.Domain;
+using Abdt.Loyal.NoteSaver.Domain.Options;
 using Abdt.Loyal.NoteSaver.Repository.Abstractions;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Abdt.Loyal.NoteSaver.Repository
@@ -9,11 +11,13 @@ namespace Abdt.Loyal.NoteSaver.Repository
     {
         private readonly NoteDbRepository _decorated;
         private readonly IDistributedCache _cache;
+        private readonly uint _duration;
 
-        public CachedNoteRepository(NoteDbRepository decorated, IDistributedCache cache)
+        public CachedNoteRepository(NoteDbRepository decorated, IDistributedCache cache, IOptions<RedisArgs> options)
         {
             _decorated = decorated;
             _cache = cache;
+            _duration = options.Value.DefaultCacheDurationInMinutes;
         }
 
         public Task<long> Add(Note item)
@@ -38,7 +42,11 @@ namespace Abdt.Loyal.NoteSaver.Repository
                 if (note is null)
                     return note;
 
-                await _cache.SetStringAsync(key, JsonSerializer.Serialize(note));
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_duration)
+                };
+                await _cache.SetStringAsync(key, JsonSerializer.Serialize(note), cacheOptions);
 
                 return note;
             }
@@ -59,7 +67,11 @@ namespace Abdt.Loyal.NoteSaver.Repository
                 if (page is null)
                     return page;
 
-                await _cache.SetStringAsync(key, JsonSerializer.Serialize(page));
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(_duration)
+                };
+                await _cache.SetStringAsync(key, JsonSerializer.Serialize(page), cacheOptions);
 
                 return page;
             }
