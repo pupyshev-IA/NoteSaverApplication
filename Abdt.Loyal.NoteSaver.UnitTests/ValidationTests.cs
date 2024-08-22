@@ -121,7 +121,7 @@ namespace Abdt.Loyal.NoteSaver.UnitTests
             Assert.Throws<ArgumentNullException>(() => validator.Validate((Note)null));
         }
 
-        private Note GetValidNote() 
+        private Note GetValidNote()
         {
             return new Note
             {

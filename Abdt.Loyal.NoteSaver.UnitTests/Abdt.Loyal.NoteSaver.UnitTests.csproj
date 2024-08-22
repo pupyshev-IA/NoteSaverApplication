@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NoteSaverApplication\Abdt.Loyal.NoteSaver.BusinessLogic\Abdt.Loyal.NoteSaver.BusinessLogic.csproj" />
-    <ProjectReference Include="..\NoteSaverApplication\Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj" />
-    <ProjectReference Include="..\NoteSaverApplication\Abdt.Loyal.NoteSaver.Repository\Abdt.Loyal.NoteSaver.Repository.csproj" />
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.BusinessLogic\Abdt.Loyal.NoteSaver.BusinessLogic.csproj" />
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
