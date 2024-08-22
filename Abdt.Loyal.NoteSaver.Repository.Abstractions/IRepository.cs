@@ -9,7 +9,7 @@ namespace Abdt.Loyal.NoteSaver.Repository.Abstractions
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Возвращает добавленный элемент с проинициализированными служебными полями</returns>
-        Task<long> Add(T item);
+        Task<T> Add(T item);
 
         /// <summary>
         /// Обновляет элемент в хранилище.

@@ -39,17 +39,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IStorageLogic<Note>, StorageLogic>();
 builder.Services.AddScoped<IValidator<Note>, Validator>();
-//builder.Services.AddScoped<IRepository<Note>, NoteDbRepository>();
-
+builder.Services.AddScoped<ICache, CachingItem>();
 builder.Services.AddScoped<NoteDbRepository>();
 builder.Services.AddScoped<IRepository<Note>, CachedNoteRepository>();
 
 builder.Services.AddOptions<LogicArgs>()
     .BindConfiguration("Flags")
-    .ValidateDataAnnotations();
-
-builder.Services.AddOptions<RedisArgs>()
-    .BindConfiguration("RedisCacheSettings")
     .ValidateDataAnnotations();
 
 var app = builder.Build();

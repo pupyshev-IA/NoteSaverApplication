@@ -16,10 +16,6 @@ namespace Abdt.Loyal.NoteSaver.Repository
         {
             return Task.Run(() =>
             {
-                var currentDate = DateTimeOffset.Now;
-                item.CreatedAt = currentDate;
-                item.UpdatedAt = currentDate;
-
                 _currentId++;
 
                 item.Id = _currentId;
@@ -86,7 +82,6 @@ namespace Abdt.Loyal.NoteSaver.Repository
 
                 updatedNote.Title = item.Title;
                 updatedNote.Content = item.Content;
-                updatedNote.UpdatedAt = DateTimeOffset.Now;
 
                 return updatedNote;
             });

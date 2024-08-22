@@ -20,18 +20,18 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             _repository = repository;
         }
 
-        public async Task<long> Add(Note note)
+        public async Task<Note> Add(Note note)
         {
             using var scope = _logger.BeginScope("");
 
             if (note == null)
                 throw new ArgumentNullException(nameof(note));
 
-            var addedNoteId = await _repository.Add(note);
+            var addedNote = await _repository.Add(note);
 
-            _logger.LogInformation("Added a note with id=\"{id}\" title=\"{title}\", content=\"{content}\"", addedNoteId, note.Title, note.Content);
+            _logger.LogInformation("Added a note with id=\"{id}\" title=\"{title}\", content=\"{content}\"", addedNote, note.Title, note.Content);
 
-            return addedNoteId;
+            return addedNote;
         }
 
         public Task Delete(long id)
@@ -43,9 +43,6 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             }
 
             _logger.LogInformation("Deletion a note with id=\"{id}\"", id);
-
-            if (_isSoftDeleteEnabled)
-                return SoftDeleteOperation(id);
 
             return _repository.Delete(id);
         }
@@ -81,23 +78,9 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             return await _repository.Update(note);
         }
 
-        public Task RestoreDeleted(long id)
-        {
-            return SoftDeleteOperation(id, true);
-        }
-
-        /// <summary>
-        /// Реализует операцию мягкого удаления
-        /// </summary>
-        /// <param name="id">Идентификатор записи для удаления</param>
-        /// <param name="reverse">Флаг отката операции</param>
-        /// <returns></returns>
-        private async Task SoftDeleteOperation(long id, bool reverse = false)
-        {
-            var note = await _repository.GetById(id);
-            if (note is null) return;
-            note.IsDeleted = !reverse;
-            var updatedNote = await _repository.Update(note);
-        }
+        //public Task RestoreDeleted(long id)
+        //{
+        //    return SoftDeleteOperation(id, true);
+        //}
     }
 }
