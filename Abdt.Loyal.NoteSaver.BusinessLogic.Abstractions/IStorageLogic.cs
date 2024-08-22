@@ -2,13 +2,13 @@
 
 namespace Abdt.Loyal.NoteSaver.BusinessLogic.Abstractions
 {
-    public interface IStorageLogic
+    public interface IStorageLogic<T>
     {
-        public ICollection<Note> GetAllNotes();
-        public Note FindNoteByTitle(string title);
-        public Note FindNoteByContent(string content);
-        public int AddNote(Note note);
-        public Note UpdateNote(Note note);
-        public bool DeleteNote(int id);
+        Task<Page<T>> GetPage(ushort pageNumber, int itemsCount);
+        Task<T> Add(T note);
+        Task<T?> Get(long id);
+        Task<T?> Update(T note);
+        Task Delete(long id);
+        //Task RestoreDeleted(long id);
     }
 }

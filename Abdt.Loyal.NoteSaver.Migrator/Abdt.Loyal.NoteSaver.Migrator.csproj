@@ -1,6 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -16,13 +17,21 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Domain\Abdt.Loyal.NoteSaver.Domain.csproj" />
-    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Repository.Abstractions\Abdt.Loyal.NoteSaver.Repository.Abstractions.csproj" />
+    <ProjectReference Include="..\Abdt.Loyal.NoteSaver.Repository\Abdt.Loyal.NoteSaver.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MigrationSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

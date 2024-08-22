@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "NoteConnectionString": "Server=localhost;Port=5432;Uid=notesaver;Pwd=qwerty;Database=notesdb"
+  }
+}

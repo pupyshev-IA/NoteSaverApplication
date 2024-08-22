@@ -1,0 +1,63 @@
+version: '3.4'
+
+services:
+  postgres: 
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: "notesaver"
+      POSTGRES_PASSWORD: "qwerty"
+      POSTGRES_DB: "notesdb"
+    volumes:
+      - C:\Users\PupyshevIA\source\NoteSaverDb:/data/db
+
+  abdt.loyal.notesaver:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
+    build:
+      context: .
+      dockerfile: NoteSaverApplication/Dockerfile
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+      - redis
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "5454:5454/tcp"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=some@email.com
+      - PGADMIN_DEFAULT_PASSWORD=somepassword
+      - PGADMIN_LISTEN_PORT=5454
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    expose:
+      - 6379
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=5
+    volumes:
+      - C:\Users\PupyshevIA\source\RedisDb:/data/db
+
+  redis_insight: 
+    image: redislabs/redisinsight:1.14.0 
+    container_name: redis_insight 
+    restart: always 
+    ports: 
+      - 8001:8001
+    depends_on:
+      - redis
