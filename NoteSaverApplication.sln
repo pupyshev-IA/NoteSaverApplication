@@ -19,9 +19,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Migrator", "Abdt.Loyal.NoteSaver.Migrator\Abdt.Loyal.NoteSaver.Migrator.csproj", "{26B5D82D-7253-493F-AEA1-DDA42FC9E345}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.UnitTests", "..\Abdt.Loyal.NoteSaver.UnitTests\Abdt.Loyal.NoteSaver.UnitTests.csproj", "{053EEE52-3575-4D4E-9868-BC1C0D62C086}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.IntegrationTests", "..\Abdt.Loyal.NoteSaver.IntegrationTests\Abdt.Loyal.NoteSaver.IntegrationTests.csproj", "{0F4E0B15-7D13-462D-BA4F-AED4D45FEAE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.UnitTests", "Abdt.Loyal.NoteSaver.UnitTests\Abdt.Loyal.NoteSaver.UnitTests.csproj", "{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,14 +59,10 @@ Global
 		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26B5D82D-7253-493F-AEA1-DDA42FC9E345}.Release|Any CPU.Build.0 = Release|Any CPU
-		{053EEE52-3575-4D4E-9868-BC1C0D62C086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{053EEE52-3575-4D4E-9868-BC1C0D62C086}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{053EEE52-3575-4D4E-9868-BC1C0D62C086}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{053EEE52-3575-4D4E-9868-BC1C0D62C086}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F4E0B15-7D13-462D-BA4F-AED4D45FEAE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F4E0B15-7D13-462D-BA4F-AED4D45FEAE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F4E0B15-7D13-462D-BA4F-AED4D45FEAE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F4E0B15-7D13-462D-BA4F-AED4D45FEAE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
