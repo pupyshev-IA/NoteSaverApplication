@@ -7,7 +7,7 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-var connectionString = configuration.GetConnectionString("NoteConnectionString");
+var connectionString = configuration.GetConnectionString("PostgresConnection");
 
 var optionsBuilder = new DbContextOptionsBuilder<NoteContext>();
 optionsBuilder.UseNpgsql(connectionString);

@@ -17,7 +17,7 @@ builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
 
-var dbConnection = builder.Configuration.GetConnectionString("DbConnection");
+var dbConnection = builder.Configuration.GetConnectionString("PostgresConnection");
 if (string.IsNullOrWhiteSpace(dbConnection))
     throw new ArgumentException(nameof(dbConnection));
 
