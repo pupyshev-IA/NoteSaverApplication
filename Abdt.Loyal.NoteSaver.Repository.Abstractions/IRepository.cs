@@ -28,13 +28,13 @@ namespace Abdt.Loyal.NoteSaver.Repository.Abstractions
         /// Извлекает сведения по заданной странице.
         /// </summary>
         /// <returns>Возвращает страницу</returns>
-        Task<Page<T>> GetPage(ushort pageNumber, int itemsCount);
+        Task<Page<T>> GetPage(ushort pageNumber, int itemsCount, long userId);
 
         /// <summary>
         /// Находит элемент по идентификатору в хранилище.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Возвращает найденный элемент или null если элемент не найден</returns>
-        Task<T?> GetById(long id);
+        Task<T?> GetById(long id, long userId);
     }
 }

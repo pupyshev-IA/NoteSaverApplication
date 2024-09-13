@@ -28,20 +28,20 @@ namespace Abdt.Loyal.NoteSaver.Repository
             await Task.Run(() => _cache.Invalidate<Note>(id.ToString()));
         }
 
-        public async Task<Note?> GetById(long id)
+        public async Task<Note?> GetById(long id, long userId)
         {
             var cachedNote = await Task.Run(() => _cache.Get<Note>(id.ToString()));
             if (cachedNote is not null)
                 return cachedNote;
 
-            var note = await _decorated.GetById(id);
+            var note = await _decorated.GetById(id, userId);
             await Task.Run(() => _cache.Set(id.ToString(), note));
             return note;
         }
 
-        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
+        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount, long userId)
         {
-            return await _decorated.GetPage(pageNumber, itemsCount);
+            return await _decorated.GetPage(pageNumber, itemsCount, userId);
         }
 
         public async Task<Note?> Update(Note item)

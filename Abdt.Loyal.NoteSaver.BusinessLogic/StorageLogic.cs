@@ -47,13 +47,13 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             return _repository.Delete(id);
         }
 
-        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
+        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount, long userId)
         {
             _logger.LogInformation("Getting a page number=\"{pageNumber}\" with \"{itemsCount}\" items", pageNumber, itemsCount);
-            return await _repository.GetPage(pageNumber, itemsCount);
+            return await _repository.GetPage(pageNumber, itemsCount, userId);
         }
 
-        public async Task<Note?> Get(long id)
+        public async Task<Note?> Get(long id, long userId)
         {
             if (id <= 0)
             {
@@ -62,7 +62,7 @@ namespace Abdt.Loyal.NoteSaver.BusinessLogic
             }
 
             _logger.LogInformation("Getting specified note with id=\"{id}\"", id);
-            return await _repository.GetById(id);
+            return await _repository.GetById(id, userId);
         }
 
         public async Task<Note?> Update(Note note)

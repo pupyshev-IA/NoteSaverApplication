@@ -37,28 +37,28 @@ namespace Abdt.Loyal.NoteSaver.Repository
         }
 
         /// <inheritdoc />
-        public async Task<Note?> GetById(long id)
+        public async Task<Note?> GetById(long id, long userId)
         {
             if (id <= 0)
                 throw new BelowZeroIdentifierException(id);
 
-            var note = await _noteContext.Notes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var note = await _noteContext.Notes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
             return note;
         }
 
         /// <inheritdoc />
-        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount)
+        public async Task<Page<Note>> GetPage(ushort pageNumber, int itemsCount, long userId)
         {
             if (itemsCount > 100)
                 itemsCount = 100;
 
-            var pageParams = GetPageParameters(pageNumber, itemsCount);
+            var pageParams = GetPageParameters(pageNumber, itemsCount, userId);
 
             var page = new Page<Note>()
             {
-                Items = await GetItems(pageParams.ItemsToSkip, itemsCount),
-                AllItemsCount = GetAllItemsCount(),
+                Items = await GetItems(pageParams.ItemsToSkip, itemsCount, userId),
+                AllItemsCount = GetAllItemsCount(userId),
                 CurrentPageNumber = pageParams.PageNumber
             };
 
@@ -80,7 +80,7 @@ namespace Abdt.Loyal.NoteSaver.Repository
         /// Подсчитывает количество элементов.
         /// </summary>
         /// <returns>Количество элементов</returns>
-        private uint GetAllItemsCount() => Convert.ToUInt32(_noteContext.Notes.Count());
+        private uint GetAllItemsCount(long userId) => Convert.ToUInt32(_noteContext.Notes.Where(x => x.UserId == userId).Count());
 
         /// <summary>
         /// Высчитывает параметры страницы.
@@ -88,14 +88,14 @@ namespace Abdt.Loyal.NoteSaver.Repository
         /// <param name="pageNumber"></param>
         /// <param name="itemsCount"></param>
         /// <returns>Кортеж параметров страницы</returns>
-        private (ushort PageNumber, int ItemsToSkip) GetPageParameters(ushort pageNumber, int itemsCount)
+        private (ushort PageNumber, int ItemsToSkip) GetPageParameters(ushort pageNumber, int itemsCount, long userId)
         {
             var itemsToSkip = (pageNumber - 1) * itemsCount;
 
-            if (_noteContext.Notes.Count() - itemsToSkip > 0)
+            if (_noteContext.Notes.Where(x => x.UserId == userId).Count() - itemsToSkip > 0)
                 return (pageNumber, itemsToSkip);
 
-            ushort extraPages = (ushort)(Math.Abs(_noteContext.Notes.Count() - itemsToSkip) / itemsCount + 1);
+            ushort extraPages = (ushort)(Math.Abs(_noteContext.Notes.Where(x => x.UserId == userId).Count() - itemsToSkip) / itemsCount + 1);
             ushort actualPage = (ushort)(pageNumber - extraPages);
 
             var newItemsToSkip = (actualPage - 1) * itemsCount;
@@ -109,10 +109,11 @@ namespace Abdt.Loyal.NoteSaver.Repository
         /// <param name="itemsToSkip"></param>
         /// <param name="itemsCount"></param>
         /// <returns>Возвращает коллекцию элементов</returns>
-        private async Task<ICollection<Note>> GetItems(int itemsToSkip, int itemsCount)
+        private async Task<ICollection<Note>> GetItems(int itemsToSkip, int itemsCount, long userId)
         {
             var items = await _noteContext.Notes
                 .AsNoTracking()
+                .Where(x => x.UserId == userId)
                 .Skip(itemsToSkip)
                 .Take(itemsCount)
                 .ToArrayAsync();
