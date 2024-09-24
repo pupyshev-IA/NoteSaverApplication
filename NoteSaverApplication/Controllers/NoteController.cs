@@ -96,7 +96,7 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         {
             foreach (var item in Enumerable.Range(0, count))
             {
-                var note = new Note() { Title = item.ToString(), Content = Guid.NewGuid().ToString() };
+                var note = new Note() { Title = $"NoteTitle: {item.ToString()}", Content = $"Content: text-{Guid.NewGuid().ToString()}" };
                 _ = await _service.Add(note);
             }
 
