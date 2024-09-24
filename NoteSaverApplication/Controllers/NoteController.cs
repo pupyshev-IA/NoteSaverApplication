@@ -61,9 +61,7 @@ namespace Abdt.Loyal.NoteSaver.Controllers
                 return UnprocessableEntity(validationResult.Errors);
 
             var updatedNote = await _service.Update(note);
-            var adaptedNote = updatedNote.Adapt<NoteDtoOut>();
-
-            return Ok(adaptedNote);
+            return Ok(updatedNote);
         }
 
         [HttpDelete]
@@ -85,9 +83,7 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         {
             var noteList = await _service.GetPage(pageNumber, itemsCount);
 
-            var page = noteList.Adapt<Page<NoteDtoOut>>();
-
-            return Ok(page);
+            return Ok(noteList);
         }
 
         [HttpPost]
