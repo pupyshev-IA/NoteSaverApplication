@@ -21,11 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Migrat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.UnitTests", "Abdt.Loyal.NoteSaver.UnitTests\Abdt.Loyal.NoteSaver.UnitTests.csproj", "{3B22C50B-5ED9-4F3F-BE20-76EF87215C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Web.Server", "Abdt.Loyal.NoteSaver.Web\Server\Abdt.Loyal.NoteSaver.Web.Server.csproj", "{7061EB70-5911-48D0-8EC5-9754DED0ABC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Web.Server", "Abdt.Loyal.NoteSaver.Web\Server\Abdt.Loyal.NoteSaver.Web.Server.csproj", "{7061EB70-5911-48D0-8EC5-9754DED0ABC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Web.Client", "Abdt.Loyal.NoteSaver.Web\Client\Abdt.Loyal.NoteSaver.Web.Client.csproj", "{29D6F81C-2160-4EF2-94E2-B038272D8E7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Web.Client", "Abdt.Loyal.NoteSaver.Web\Client\Abdt.Loyal.NoteSaver.Web.Client.csproj", "{29D6F81C-2160-4EF2-94E2-B038272D8E7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abdt.Loyal.NoteSaver.Web.Shared", "Abdt.Loyal.NoteSaver.Web\Shared\Abdt.Loyal.NoteSaver.Web.Shared.csproj", "{D48CB7E1-478F-4CF0-A157-89D49355C2BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abdt.Loyal.NoteSaver.Web.Shared", "Abdt.Loyal.NoteSaver.Web\Shared\Abdt.Loyal.NoteSaver.Web.Shared.csproj", "{D48CB7E1-478F-4CF0-A157-89D49355C2BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
