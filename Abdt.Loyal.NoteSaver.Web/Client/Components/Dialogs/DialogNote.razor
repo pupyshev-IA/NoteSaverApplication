@@ -1,0 +1,30 @@
+﻿@using Abdt.Loyal.NoteSaver.Web.Shared
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h5">@Note.Title</MudText>
+        <MudText Typo="Typo.body2">@Note.Content</MudText>
+        <MudChip T="string" Variant="Variant.Outlined" Color="Color.Tertiary" Size="Size.Small">
+            Created: @Note.CreatedAt.ToString("yyyy-MM-dd")
+        </MudChip>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+
+</style>
+
+@code {
+    [Parameter] public Note Note { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+}

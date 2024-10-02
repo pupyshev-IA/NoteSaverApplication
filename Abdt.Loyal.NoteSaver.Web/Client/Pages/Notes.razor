@@ -1,11 +1,91 @@
 ﻿@page "/workspace/notes"
+
+@using Abdt.Loyal.NoteSaver.Web.Client.Components.Dialogs
+@using Abdt.Loyal.NoteSaver.Web.Shared
 @inject ISnackbar _snackbar
+@inject IDialogService _dialogService
 
 <MudContainer Class="mt-6">
+    <MudPaper Class="py-3" Elevation="0">
+        <MudText Typo="Typo.h4" Class="px-4">My notes</MudText>
+        <MudText Typo="Typo.body1" Class="px-4 mud-text-secondary">Easy note-taking</MudText>
+    </MudPaper>
 
+    <MudGrid Class="mt-4" Justify="Justify.Center">
+        @foreach (var note in pagedNotes)
+        {
+            <MudItem xs="10">
+                <MudCard Elevation="2" Class="card" @onclick="() => OpenDialogNoteAsync(note)">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <div style="display: flex; justify-content: space-between; align-items: center">
+                                <MudText Typo="Typo.h5">@note.Title</MudText>
+                                <MudChip T="string" Variant="Variant.Outlined" Color="Color.Tertiary" Size="Size.Small">
+                                    Created: @note.CreatedAt.ToString("yyyy-MM-dd")
+                                </MudChip>
+                            </div>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.body2">@note.Content</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+        <MudItem Style="margin-bottom: 30px;">
+            <MudPagination Count="@allItemsCount" Selected="currentPage" SelectedChanged="ToPage" ShowFirstButton="true" ShowLastButton="true" Color="Color.Tertiary" />
+        </MudItem>
+    </MudGrid>
+
+    <MudScrollToTop>
+        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+    </MudScrollToTop>
 </MudContainer>
 
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+</style>
 
 @code {
+    private const int ElementsPerPage = 10;
+    private int currentPage = 1;
+    private int allItemsCount;
 
+    private List<Note> notes = new();
+    private List<Note> pagedNotes => notes.Skip((currentPage - 1) * ElementsPerPage).Take(ElementsPerPage).ToList();
+
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i <= 30; i++)
+        {
+            var note = new Note
+                {
+                    Title = $"Note Title {i}",
+                    Content = $"This is the content of the note {i}.",
+                    CreatedAt = DateTime.Now.AddDays(-i)
+                };
+
+            notes.Add(note);
+        }
+
+        allItemsCount = (int)Math.Ceiling((double) (notes.Count / ElementsPerPage));
+    }
+
+    private void ToPage(int pageIndex) => currentPage = pageIndex;
+
+    private async Task OpenDialogNoteAsync(Note note)
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true };
+        var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
+
+        await _dialogService.ShowAsync<DialogNote>("Info", parameters, options);
+    }
 }
