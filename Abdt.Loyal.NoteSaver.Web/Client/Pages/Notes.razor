@@ -7,8 +7,13 @@
 
 <MudContainer Class="mt-6">
     <MudPaper Class="py-3" Elevation="0">
-        <MudText Typo="Typo.h4" Class="px-4">My notes</MudText>
-        <MudText Typo="Typo.body1" Class="px-4 mud-text-secondary">Easy note-taking</MudText>
+        <MudStack Row="true" Justify="Justify.SpaceBetween">
+            <MudStack>
+                <MudText Typo="Typo.h4" Class="px-4">My notes</MudText>
+                <MudText Typo="Typo.body1" Class="px-4 mud-text-secondary">Easy note-taking</MudText>
+            </MudStack>
+            <MudFab Color="Color.Tertiary" Class="add-btn" OnClick="AddNote" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" Ripple="true" />
+        </MudStack>
     </MudPaper>
 
     <MudGrid Class="mt-4" Justify="Justify.Center">
@@ -21,7 +26,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center">
                                 <MudText Typo="Typo.h5">@note.Title</MudText>
                                 <MudChip T="string" Variant="Variant.Outlined" Color="Color.Tertiary" Size="Size.Small">
-                                    Created: @note.CreatedAt.ToString("yyyy-MM-dd")
+                                    Created: @note.CreatedAt.ToString("dd-MM-yyyy, HH:mm")
                                 </MudChip>
                             </div>
                         </CardHeaderContent>
@@ -52,6 +57,12 @@
             transform: scale(1.05);
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
         }
+
+    .add-btn {
+        position: fixed;
+        top: 10%;
+        right: 10%
+    }
 </style>
 
 @code {
@@ -76,14 +87,19 @@
             notes.Add(note);
         }
 
-        allItemsCount = (int)Math.Ceiling((double) (notes.Count / ElementsPerPage));
+        allItemsCount = (int)Math.Ceiling((double)(notes.Count / ElementsPerPage));
     }
 
     private void ToPage(int pageIndex) => currentPage = pageIndex;
 
+    private void AddNote()
+    {
+
+    }
+
     private async Task OpenDialogNoteAsync(Note note)
     {
-        var options = new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
         var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
 
         await _dialogService.ShowAsync<DialogNote>("Info", parameters, options);
