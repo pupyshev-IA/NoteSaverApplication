@@ -7,5 +7,14 @@ namespace Abdt.Loyal.NoteSaver.Web.Shared
         public string Content { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+        public NoteStatus Status { get; set; }
+    }
+
+    public enum NoteStatus
+    {
+        InProgress,
+        Done,
+        Pending,
+        Cancelled
     }
 }

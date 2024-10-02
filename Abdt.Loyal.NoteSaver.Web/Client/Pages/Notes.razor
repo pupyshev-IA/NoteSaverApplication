@@ -12,27 +12,31 @@
         <MudFab Color="Color.Tertiary" Class="add-btn" OnClick="AddNote" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" Ripple="true" />
     </MudPaper>
 
-    <MudGrid Class="mt-4" Justify="Justify.Center">
+    <MudGrid Class="mt-4 align-center" Justify="Justify.Center">
         @foreach (var note in pagedNotes)
         {
-            <MudItem xs="10">
-                <MudCard Elevation="2" Class="card" @onclick="() => OpenDialogNoteAsync(note)">
+            <MudItem xs="12" sm="6">
+                <MudCard Elevation="2" Class="card rounded-xl" Style="@(GetBackgroundColor(note.Status))" @onclick="() => OpenDialogNoteAsync(note)">
                     <MudCardHeader>
                         <CardHeaderContent>
                             <div style="display: flex; justify-content: space-between; align-items: center">
-                                <MudText Typo="Typo.h5">@note.Title</MudText>
-                                <MudChip T="string" Variant="Variant.Outlined" Color="Color.Tertiary" Size="Size.Small">
-                                    Created: @note.CreatedAt.ToString("dd-MM-yyyy, HH:mm")
-                                </MudChip>
+                                <MudText Typo="Typo.h6"><b>@note.Title</b></MudText>
+                                <MudChip T="string" Color="@GetStatusColor(note.Status)" Size="Size.Medium">@note.Status.ToString()</MudChip>
                             </div>
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudText Typo="Typo.body2">@note.Content</MudText>
+                        <MudText Typo="Typo.body1" Class="content">@note.Content</MudText>
+                        <MudStack Row="true" Justify="Justify.SpaceBetween">
+                            <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@note.CreatedAt.ToString("HH:mm")</MudText>
+                            <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@note.CreatedAt.ToString("dd MMMM yyyy")</MudText>
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
         }
+        <MudFlexBreak />
+
         <MudItem Style="margin-bottom: 30px;">
             <MudPagination Count="@allItemsCount" Selected="currentPage" SelectedChanged="ToPage" ShowFirstButton="true" ShowLastButton="true" Color="Color.Tertiary" />
         </MudItem>
@@ -54,10 +58,18 @@
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
         }
 
+    .content {
+        min-height: 50px;
+        max-height: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+    }
+
     .add-btn {
         position: fixed;
         top: 10%;
-        right: 10%
+        right: 5%
     }
 </style>
 
@@ -71,13 +83,15 @@
 
     protected override void OnInitialized()
     {
+        var random = new Random();
         for (int i = 1; i <= 30; i++)
         {
             var note = new Note
                 {
                     Title = $"Note Title {i}",
                     Content = $"This is the content of the note {i}.",
-                    CreatedAt = DateTime.Now.AddDays(-i)
+                    CreatedAt = DateTime.Now.AddDays(-i),
+                    Status = (NoteStatus)random.Next(Enum.GetValues(typeof(NoteStatus)).Length)
                 };
 
             notes.Add(note);
@@ -93,11 +107,35 @@
 
     }
 
+    private Color GetStatusColor(NoteStatus status)
+    {
+        return status switch
+        {
+            NoteStatus.InProgress => Color.Info,
+            NoteStatus.Done => Color.Success,
+            NoteStatus.Pending => Color.Warning,
+            NoteStatus.Cancelled => Color.Error
+        };
+    }
+
+    private string GetBackgroundColor(NoteStatus status)
+    {
+        string color = status switch
+        {
+            NoteStatus.InProgress => Colors.Blue.Lighten5,
+            NoteStatus.Done => Colors.Green.Lighten5,
+            NoteStatus.Pending => Colors.Orange.Lighten5,
+            NoteStatus.Cancelled => Colors.Red.Lighten5
+        };
+
+        return "background: " + color;
+    }
+
     private async Task OpenDialogNoteAsync(Note note)
     {
         var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
         var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
 
-        await _dialogService.ShowAsync<DialogNote>("Info", parameters, options);
+        await _dialogService.ShowAsync<DialogNote>("", parameters, options);
     }
 }

@@ -19,10 +19,10 @@
 </style>
 
 @code {
-    [Parameter] public Note Note { get; set; }
-
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Note Note { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
