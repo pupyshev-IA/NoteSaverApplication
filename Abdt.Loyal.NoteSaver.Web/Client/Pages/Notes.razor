@@ -1,9 +1,12 @@
 ﻿@page "/workspace/notes"
 
 @using Abdt.Loyal.NoteSaver.Web.Client.Components.Dialogs
+@using Abdt.Loyal.NoteSaver.Web.Client.Http
 @using Abdt.Loyal.NoteSaver.Web.Shared
+
 @inject ISnackbar _snackbar
 @inject IDialogService _dialogService
+@inject INoteClient<Note> _noteClient
 
 <MudContainer Class="mt-6">
     <MudPaper Class="py-3" Elevation="0">
@@ -13,7 +16,7 @@
     </MudPaper>
 
     <MudGrid Class="mt-4 align-center" Justify="Justify.Center">
-        @foreach (var note in pagedNotes)
+        @foreach (var note in notes)
         {
             <MudItem xs="12" sm="6">
                 <MudCard Elevation="2" Class="card rounded-xl" Style="@(GetBackgroundColor(note.Status))" @onclick="() => OpenDialogNoteAsync(note)">
@@ -79,32 +82,37 @@
     private int allItemsCount;
 
     private List<Note> notes = new();
-    private List<Note> pagedNotes => notes.Skip((currentPage - 1) * ElementsPerPage).Take(ElementsPerPage).ToList();
+    //private List<Note> pagedNotes => notes.Skip((currentPage - 1) * ElementsPerPage).Take(ElementsPerPage).ToList();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync() => await FetchPage();
+
+    private async Task FetchPage()
     {
-        var random = new Random();
-        for (int i = 1; i <= 30; i++)
-        {
-            var note = new Note
-                {
-                    Title = $"Note Title {i}",
-                    Content = $"This is the content of the note {i}.",
-                    CreatedAt = DateTime.Now.AddDays(-i),
-                    Status = (NoteStatus)random.Next(Enum.GetValues(typeof(NoteStatus)).Length)
-                };
+        var page = await _noteClient.GetPage((ushort)currentPage, ElementsPerPage);
+        if (page is null)
+            return;
 
-            notes.Add(note);
-        }
-
-        allItemsCount = (int)Math.Ceiling((double)(notes.Count / ElementsPerPage));
+        notes = page.Items.ToList();
+        allItemsCount = (int)page.AllItemsCount;
     }
 
-    private void ToPage(int pageIndex) => currentPage = pageIndex;
+    private async Task ToPage(int pageIndex)
+    {
+        currentPage = pageIndex;
+        await FetchPage();
+    }
 
     private void AddNote()
     {
 
+    }
+
+    private async Task OpenDialogNoteAsync(Note note)
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
+
+        await _dialogService.ShowAsync<DialogNote>("", parameters, options);
     }
 
     private Color GetStatusColor(NoteStatus status)
@@ -129,13 +137,5 @@
         };
 
         return "background: " + color;
-    }
-
-    private async Task OpenDialogNoteAsync(Note note)
-    {
-        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
-
-        await _dialogService.ShowAsync<DialogNote>("", parameters, options);
     }
 }
