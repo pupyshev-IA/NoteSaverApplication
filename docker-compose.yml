@@ -1,19 +1,6 @@
 version: '3.4'
 
 services:
-  abdt.loyal.notesaver:
-    image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
-    build:
-      context: .
-      dockerfile: Abdt.Loyal.NoteSaver/Dockerfile
-    ports:
-      - "5000:5000"
-    expose:
-      - 5000
-    depends_on:
-      - postgres
-      - redis
-  
   postgres: 
     image: postgres:latest
     container_name: postgres
@@ -61,3 +48,26 @@ services:
       - 8001:8001
     depends_on:
       - redis
+
+  abdt.loyal.notesaver:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
+    build:
+      context: .
+      dockerfile: Abdt.Loyal.NoteSaver/Dockerfile
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+      - redis
+
+  abdt.loyal.notesaver.web.server:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaverwebserver
+    build:
+      context: .
+      dockerfile: Abdt.Loyal.NoteSaver.Web/Server/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - abdt.loyal.notesaver
