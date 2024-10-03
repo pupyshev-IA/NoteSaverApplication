@@ -30,23 +30,23 @@ namespace Abdt.Loyal.NoteSaver.Controllers
                 return NotFound();
 
             var note = await _service.Get(id);
-            var adaptedNote = note.Adapt<NoteDtoOut>();
+            var adaptedNote = note.Adapt<NoteOut>();
 
             return Ok(adaptedNote);
         }
 
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddNote([FromBody] NoteDto noteDto)
+        public async Task<IActionResult> AddNote([FromBody] NoteDtoAdd noteDtoAdd)
         {
-            var note = new Note() { Title = noteDto.Title, Content = noteDto.Content, Status = noteDto.Status };
+            var note = new Note() { Title = noteDtoAdd.Title, Content = noteDtoAdd.Content, Status = noteDtoAdd.Status };
 
             if (!_validator.Validate(note).IsValid)
                 return UnprocessableEntity();
 
-            var addedNoteId = await _service.Add(note);
+            var addedNote = await _service.Add(note);
 
-            return Created(new Uri("api/v1/notes/", UriKind.Relative), addedNoteId);
+            return Created(new Uri("api/v1/notes/", UriKind.Relative), addedNote);
         }
 
         [HttpPut]

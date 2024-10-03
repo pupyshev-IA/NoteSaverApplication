@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Abdt.Loyal.NoteSaver.DTO
 {
-    public class NoteDto
+    public class NoteDtoAdd
     {
         [Required(AllowEmptyStrings = false)]
         [MaxLength(50, ErrorMessage = "Title length more than 50 symbols is not allowed")]

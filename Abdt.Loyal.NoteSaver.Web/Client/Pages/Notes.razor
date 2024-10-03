@@ -82,7 +82,6 @@
     private int pageCount;
 
     private List<Note> notes = new();
-    //private List<Note> pagedNotes => notes.Skip((currentPage - 1) * ElementsPerPage).Take(ElementsPerPage).ToList();
 
     protected override async Task OnInitializedAsync() => await FetchPage();
 
@@ -93,7 +92,7 @@
             return;
 
         notes = page.Items.ToList();
-        pageCount = (int)Math.Ceiling((double)(page.AllItemsCount / ElementsPerPage));
+        pageCount = (int)Math.Ceiling((double)page.AllItemsCount / (double)ElementsPerPage);
     }
 
     private async Task ToPage(int pageIndex)

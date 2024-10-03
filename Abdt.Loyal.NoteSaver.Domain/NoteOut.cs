@@ -1,8 +1,6 @@
-﻿using Abdt.Loyal.NoteSaver.Domain;
-
-namespace Abdt.Loyal.NoteSaver.DTO
+﻿namespace Abdt.Loyal.NoteSaver.Domain
 {
-    public class NoteDtoOut
+    public class NoteOut
     {
         public long Id { get; set; }
 
@@ -11,5 +9,9 @@ namespace Abdt.Loyal.NoteSaver.DTO
         public string? Content { get; set; }
 
         public NoteStatus Status { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }
