@@ -39,7 +39,7 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         [Route("add")]
         public async Task<IActionResult> AddNote([FromBody] NoteDto noteDto)
         {
-            var note = new Note() { Title = noteDto.Title, Content = noteDto.Content };
+            var note = new Note() { Title = noteDto.Title, Content = noteDto.Content, Status = noteDto.Status };
 
             if (!_validator.Validate(note).IsValid)
                 return UnprocessableEntity();
@@ -53,7 +53,7 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         [Route("update")]
         public async Task<IActionResult> UpdateNote([FromBody] NoteDtoUpdate noteDtoUpdate)
         {
-            var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content };
+            var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content, Status = noteDtoUpdate.Status };
             var validationResult = _validator.Validate(note);
             var isValidId = note.Id >= 1;
 
@@ -90,9 +90,15 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         [Route("addTest")]
         public async Task<IActionResult> AddTestNotes([FromQuery] ushort count)
         {
+            var random = new Random();
             foreach (var item in Enumerable.Range(0, count))
             {
-                var note = new Note() { Title = $"NoteTitle: {item.ToString()}", Content = $"Content: text-{Guid.NewGuid().ToString()}" };
+                var note = new Note() 
+                { 
+                    Title = $"NoteTitle: {item.ToString()}", 
+                    Content = $"Content: text-{Guid.NewGuid().ToString()}",
+                    Status = (NoteStatus)random.Next(Enum.GetValues(typeof(NoteStatus)).Length)
+                };
                 _ = await _service.Add(note);
             }
 
