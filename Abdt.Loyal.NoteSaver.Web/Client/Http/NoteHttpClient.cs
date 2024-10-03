@@ -51,7 +51,7 @@ namespace Abdt.Loyal.NoteSaver.Web.Client.Http
             try
             {
                 var relativeUri = new Uri("delete", UriKind.Relative);
-                var uriBuilder = new UriBuilder(relativeUri);
+                var uriBuilder = new UriBuilder(new Uri(_httpClient.BaseAddress, relativeUri));
                 uriBuilder.Query = $"id={id}";
 
                 await _httpClient.DeleteAsync(uriBuilder.Uri);
@@ -82,11 +82,11 @@ namespace Abdt.Loyal.NoteSaver.Web.Client.Http
             try
             {
                 var relativeUri = new Uri("list", UriKind.Relative);
-                var uriBuilder = new UriBuilder(relativeUri);
+                var uriBuilder = new UriBuilder(new Uri(_httpClient.BaseAddress, relativeUri));
                 uriBuilder.Query = $"pageNumber={pageNumber}&itemsCount={itemsCount}";
 
                 var response = await _httpClient.GetAsync(uriBuilder.Uri);
-
+                
                 return await response.Content.ReadFromJsonAsync<Page<Note>>();
             }
             catch
