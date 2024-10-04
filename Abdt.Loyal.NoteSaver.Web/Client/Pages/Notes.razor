@@ -111,7 +111,11 @@
         var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
         var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
 
-        await _dialogService.ShowAsync<DialogNote>("", parameters, options);
+        var dialog = await _dialogService.ShowAsync<DialogNote>("", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await FetchPage();
     }
 
     private Color GetStatusColor(NoteStatus status)

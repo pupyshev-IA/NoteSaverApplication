@@ -1,15 +1,21 @@
-﻿@using Abdt.Loyal.NoteSaver.Web.Shared
+﻿@using Abdt.Loyal.NoteSaver.Web.Client.Components.Dialogs
+@using Abdt.Loyal.NoteSaver.Web.Client.Http
+@using Abdt.Loyal.NoteSaver.Web.Shared
+
+@inject ISnackbar _snackbar
+@inject IDialogService _dialogService
+@inject INoteClient<Note> _noteClient
 
 <MudDialog Class="rounded-tr-xl rounded-bl-xl" TitleClass="dialog-background-title">
     <TitleContent>
         <MudStack Row Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
-            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="Close" />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="Cancel" />
         </MudStack>
     </TitleContent>
 
     <DialogContent>
         <MudStack Row Justify="Justify.FlexEnd" Style="margin-bottom: 3ex">
-            <MudChipSet T="string" @bind-SelectedValue="selectedStatus" CheckMark SelectionMode="SelectionMode.SingleSelection">
+            <MudChipSet T="string" @bind-SelectedValue="status" CheckMark SelectionMode="SelectionMode.SingleSelection">
                 @foreach (NoteStatus status in Enum.GetValues(typeof(NoteStatus)))
                 {
                     <MudChip Variant="Variant.Text" Color="@GetStatusColor(status)" Value="@(status.ToString())">@(status.ToString())</MudChip>
@@ -26,12 +32,12 @@
             <MudStack>
                 <MudStack Spacing="0" Class="stack-adorner">
                     <MudButton Color="Color.Inherit" Class="pa-3 rounded-0" OnClick="() => isEditing = !isEditing">
-                        <MudIcon Icon="@Icons.Material.Outlined.Edit" />
+                        <MudIcon Icon="@Icons.Material.Outlined.Edit" Color="@(isEditing ? Color.Warning : Color.Inherit)" />
                     </MudButton>
-                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0" OnClick="RefreshDialogProperties">
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0" OnClick="() => RefreshDialogProperties(Note)">
                         <MudIcon Icon="@Icons.Material.Outlined.Refresh" />
                     </MudButton>
-                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0">
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0" OnClick="OpenDialogApprove">
                         <MudIcon Icon="@Icons.Material.Outlined.Delete" />
                     </MudButton>
                 </MudStack>
@@ -40,17 +46,17 @@
 
         <MudStack Row Justify="Justify.FlexStart" Style="margin-top: 2ex">
             <MudChip T="string" Variant="Variant.Outlined" Color="Color.Success" Size="Size.Small">
-                Created: @Note.CreatedAt.ToString("dd-MM-yyyy")
+                Created: @Note.CreatedAt.ToString("dd.MM.yyyy")
             </MudChip>
             <MudChip T="string" Variant="Variant.Outlined" Color="Color.Warning" Size="Size.Small">
-                Updated: @Note.UpdatedAt.ToString("dd-MM-yyyy")
+                Updated: @Note.UpdatedAt.ToString("dd.MM.yyyy")
             </MudChip>
         </MudStack>
     </DialogContent>
 
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Success" OnClick="Submit">Save</MudButton>
+        <MudButton Color="Color.Success" OnClick="() => ApplyChanges(Note)">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -59,12 +65,6 @@
         padding: 0;
         height: auto;
         background: #1ec8a5;
-    }
-
-    .dialog-background-content {
-    }
-
-    .dialog-background-actions {
     }
 </style>
 
@@ -77,24 +77,65 @@
     private bool isEditing = false;
     private string title = string.Empty;
     private string content = string.Empty;
-    private string selectedStatus = string.Empty;
+    private string status = string.Empty;
 
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    private void Close() => MudDialog.Close(DialogResult.Ok(true));
     private void Cancel() => MudDialog.Cancel();
 
     protected override void OnInitialized()
     {
-        RefreshDialogProperties();
+        RefreshDialogProperties(Note);
     }
 
-    private void RefreshDialogProperties()
+    private void RefreshDialogProperties(Note note)
     {
-        title = Note.Title;
-        content = Note.Content;
-        selectedStatus = Note.Status.ToString();
+        title = note.Title;
+        content = note.Content;
+        status = note.Status.ToString();
 
         isEditing = false;
+    }
+
+    private async Task ApplyChanges(Note note)
+    {
+        if (IsUnchanged(note) is false)
+            await UpdateNote(note);
+        else
+            Cancel();
+    }
+
+    private bool IsUnchanged(Note note)
+    {
+        var isTitleEqual = title.Equals(note.Title);
+        var isContentEqual = content.Equals(note.Content);
+        var isStatusEqual = status.Equals(note.Status.ToString());
+
+        return isStatusEqual && isContentEqual && isTitleEqual;
+    }
+
+    private async Task UpdateNote(Note note)
+    {
+        var updatedNote = await _noteClient.Update(note);
+
+        _snackbar.Add($"Note has been updated", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task DeleteNote(long id)
+    {
+        await _noteClient.Delete(id);
+
+        _snackbar.Add($"Note has been deleted", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task OpenDialogApprove()
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, BackdropClick = false };
+        var dialog = await _dialogService.ShowAsync<DialogApprove>("Are you sure you want to delete this note?", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await DeleteNote(Note.Id);
     }
 
     private Color GetStatusColor(NoteStatus status)

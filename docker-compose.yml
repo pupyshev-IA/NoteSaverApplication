@@ -68,6 +68,6 @@ services:
       context: .
       dockerfile: Abdt.Loyal.NoteSaver.Web/Server/Dockerfile
     ports:
-      - "5001:5001"
+      - "5001:80"
     depends_on:
       - abdt.loyal.notesaver
