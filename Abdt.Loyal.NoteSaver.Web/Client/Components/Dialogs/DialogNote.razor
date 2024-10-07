@@ -25,7 +25,7 @@
 
         <MudStack Row Justify="Justify.SpaceBetween">
             <MudStack Spacing="5" Style="width: 100%">
-                <MudTextField T="string" Label="Title" @bind-Value="@title" ReadOnly="@(isEditing ? false : true)" Variant="Variant.Text" />
+                <MudTextField T="string" Label="Title" @bind-Value="@title" ReadOnly="@(isEditing ? false : true)" Required="true" RequiredError="Title is required!" Variant="Variant.Text" />
                 <MudTextField T="string" Label="Content" @bind-Value="@content" ReadOnly="@(isEditing ? false : true)" AutoGrow Lines="7" MaxLines="15" Variant="Variant.Text" />
             </MudStack>
 
@@ -114,6 +114,9 @@
 
     private async Task UpdateNote(Note note)
     {
+        note.Title = title;
+        note.Content = content;
+        note.Status = (NoteStatus)Enum.Parse(typeof(NoteStatus), status);
         var updatedNote = await _noteClient.Update(note);
 
         _snackbar.Add($"Note has been updated", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);

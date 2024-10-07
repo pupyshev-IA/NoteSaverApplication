@@ -12,7 +12,7 @@
     <MudPaper Class="py-3" Elevation="0">
         <MudText Typo="Typo.h4" Class="px-4">My notes</MudText>
         <MudText Typo="Typo.body1" Class="px-4 mud-text-secondary">Easy note-taking</MudText>
-        <MudFab Color="Color.Tertiary" Class="add-btn" OnClick="AddNote" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" Ripple="true" />
+        <MudFab Color="Color.Tertiary" Class="add-btn" OnClick="OpenDialogNewNoteAsync" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" Ripple="true" />
     </MudPaper>
 
     <MudGrid Class="mt-4 align-center" Justify="Justify.Center">
@@ -101,17 +101,23 @@
         await FetchPage();
     }
 
-    private void AddNote()
-    {
-
-    }
-
     private async Task OpenDialogNoteAsync(Note note)
     {
         var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
         var parameters = new DialogParameters<DialogNote> { { x => x.Note, note } };
 
         var dialog = await _dialogService.ShowAsync<DialogNote>("", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            await FetchPage();
+    }
+
+    private async Task OpenDialogNewNoteAsync()
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = await _dialogService.ShowAsync<DialogNewNote>("", options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
