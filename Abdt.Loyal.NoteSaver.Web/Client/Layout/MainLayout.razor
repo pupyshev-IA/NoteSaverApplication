@@ -14,6 +14,7 @@
         <MudNavMenu Color="Color.Tertiary" Bordered="true">
             <MudNavGroup Title="WORKSPACE" Expanded="true">
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Note" Href="workspace/notes">My notes</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Tab" Href="workspace/board">Board</MudNavLink>
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.CalendarMonth" Href="workspace/calendar">Calendar</MudNavLink>
             </MudNavGroup>
             <MudNavGroup Title="SETTINGS" Expanded="true">
@@ -23,7 +24,7 @@
         </MudNavMenu>
     </MudDrawer>
 
-    <MudMainContent Class="pt-16 px-16">
+    <MudMainContent Class="pt-15 pb-10 px-12">
         @Body
     </MudMainContent>
 </MudLayout>

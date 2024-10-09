@@ -8,7 +8,7 @@
 @inject IDialogService _dialogService
 @inject INoteClient<Note> _noteClient
 
-<MudContainer Class="mt-6">
+<MudContainer Class="mt-2">
     <MudPaper Class="py-3" Elevation="0">
         <MudText Typo="Typo.h4" Class="px-4">My notes</MudText>
         <MudText Typo="Typo.body1" Class="px-4 mud-text-secondary">Easy note-taking</MudText>
@@ -38,12 +38,20 @@
                 </MudCard>
             </MudItem>
         }
-        <MudFlexBreak />
-
-        <MudItem Style="margin-bottom: 30px;">
-            <MudPagination Count="@pageCount" Selected="currentPage" SelectedChanged="ToPage" ShowFirstButton="true" ShowLastButton="true" Color="Color.Tertiary" />
-        </MudItem>
     </MudGrid>
+
+    @if (!notes.Any())
+    {
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Style="width: 100%; height: 55vh">
+            <MudText Typo="Typo.h4">There are no notes here yet</MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Class="mt-7" Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudPagination Count="@pageCount" Selected="currentPage" SelectedChanged="ToPage" ShowFirstButton="true" ShowLastButton="true" Color="Color.Tertiary" />
+        </MudStack>
+    }
 
     <MudScrollToTop>
         <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
