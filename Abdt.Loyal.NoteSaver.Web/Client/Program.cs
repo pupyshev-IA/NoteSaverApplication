@@ -13,7 +13,7 @@ builder.Services.AddMudServices();
 
 builder.Services.AddHttpClient<INoteClient<Note>, NoteHttpClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:62175/api/v1/notes/");
+    client.BaseAddress = new Uri("https://localhost:57692/api/v1/notes/");
 });
 
 await builder.Build().RunAsync();

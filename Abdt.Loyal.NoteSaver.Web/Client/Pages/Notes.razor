@@ -46,7 +46,7 @@
             <MudText Typo="Typo.h4" Class="mud-text-secondary" Style="opacity: 0.3;">There are no notes here yet</MudText>
         </MudStack>
     }
-    else if (notes.Count > ElementsPerPage)
+    else
     {
         <MudStack Class="mt-7" Justify="Justify.Center" AlignItems="AlignItems.Center">
             <MudPagination Count="@pageCount" Selected="currentPage" SelectedChanged="ToPage" ShowFirstButton="true" ShowLastButton="true" Color="Color.Tertiary" />
