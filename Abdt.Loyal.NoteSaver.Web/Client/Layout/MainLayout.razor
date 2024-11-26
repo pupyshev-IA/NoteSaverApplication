@@ -1,0 +1,34 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Dense="true" Color="Color.Tertiary">
+        <MudText Typo="Typo.h6" Class="px-4">NotesApp</MudText>
+    </MudAppBar>
+
+    <MudDrawer Open="true" Style="@($"background:{Colors.Gray.Lighten5};")" ClipMode="DrawerClipMode.Docked" Breakpoint="Breakpoint.Sm" Elevation="1" Variant="DrawerVariant.Mini">
+        <MudNavMenu Color="Color.Tertiary" Bordered="true">
+            <MudNavGroup Title="WORKSPACE" Expanded="true">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Note" Href="workspace/notes">My notes</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Tab" Href="workspace/board">Board</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.CalendarMonth" Href="workspace/calendar">Calendar</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="SETTINGS" Expanded="true">
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Security" Href="settings/security">Security</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Notifications" Href="settings/notifications">Notifications</MudNavLink>
+            </MudNavGroup>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Class="pt-15 pb-10 px-12">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+
+}

@@ -1,21 +1,17 @@
 ﻿namespace Abdt.Loyal.NoteSaver.Domain
 {
-    public class Note
+    public class NoteOut
     {
         public long Id { get; set; }
 
-        public string? Title { get; set; }
+        public required string Title { get; set; }
 
         public string? Content { get; set; }
 
         public NoteStatus Status { get; set; }
-    }
 
-    public enum NoteStatus
-    {
-        InProgress,
-        Done,
-        Pending,
-        Cancelled
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }

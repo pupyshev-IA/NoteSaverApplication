@@ -1,0 +1,96 @@
+﻿@using Abdt.Loyal.NoteSaver.Web.Client.Components.Dialogs
+@using Abdt.Loyal.NoteSaver.Web.Client.Http
+@using Abdt.Loyal.NoteSaver.Web.Shared
+
+@inject ISnackbar _snackbar
+@inject IDialogService _dialogService
+@inject INoteClient<Note> _noteClient
+
+<MudDialog Class="rounded-tr-xl rounded-bl-xl" TitleClass="dialog-background-title">
+    <TitleContent>
+        <MudStack Row Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="Cancel" />
+        </MudStack>
+    </TitleContent>
+
+    <DialogContent>
+        <MudStack Row Justify="Justify.FlexEnd" Style="margin-bottom: 3ex">
+            <MudChipSet T="string" @bind-SelectedValue="status" CheckMark SelectionMode="SelectionMode.SingleSelection">
+                @foreach (NoteStatus status in Enum.GetValues(typeof(NoteStatus)))
+                {
+                    <MudChip Variant="Variant.Text" Color="@GetStatusColor(status)" Value="@(status.ToString())">@(status.ToString())</MudChip>
+                }
+            </MudChipSet>
+        </MudStack>
+
+        <MudStack Row Justify="Justify.SpaceBetween">
+            <MudStack Spacing="5" Style="width: 100%">
+                <MudForm @ref="form" @bind-IsValid="isValid">
+                    <MudTextField T="string" Label="Title" @bind-Value="@title" Required="true" RequiredError="Title is required!" Variant="Variant.Text" />
+                    <MudTextField T="string" Label="Content" @bind-Value="@content" AutoGrow Lines="7" MaxLines="15" Variant="Variant.Text" />
+                </MudForm>
+            </MudStack>
+
+        </MudStack>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="AddNote">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .dialog-background-title {
+        padding: 0;
+        height: auto;
+        background: #1ec8a5;
+    }
+</style>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private MudForm form;
+    private bool isValid;
+
+    private string title = string.Empty;
+    private string content = string.Empty;
+    private string status = "Pending";
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task AddNote()
+    {
+        await form.Validate();
+        if (!isValid)
+        {
+            _snackbar.Add($"Incorrect data entered", Severity.Error, c => c.SnackbarVariant = Variant.Outlined);
+            return;
+        }
+
+        var note = new Note
+            {
+                Title = title,
+                Content = content,
+                Status = (NoteStatus)Enum.Parse(typeof(NoteStatus), status)
+            };
+
+        _ = await _noteClient.Add(note);
+
+        _snackbar.Add($"Note has been added", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private Color GetStatusColor(NoteStatus status)
+    {
+        return status switch
+        {
+            NoteStatus.InProgress => Color.Info,
+            NoteStatus.Done => Color.Success,
+            NoteStatus.Pending => Color.Warning,
+            NoteStatus.Cancelled => Color.Error
+        };
+    }
+}

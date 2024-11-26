@@ -30,30 +30,30 @@ namespace Abdt.Loyal.NoteSaver.Controllers
                 return NotFound();
 
             var note = await _service.Get(id);
-            var adaptedNote = note.Adapt<NoteDtoOut>();
+            var adaptedNote = note.Adapt<NoteOut>();
 
             return Ok(adaptedNote);
         }
 
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddNote([FromBody] NoteDto noteDto)
+        public async Task<IActionResult> AddNote([FromBody] NoteDtoAdd noteDtoAdd)
         {
-            var note = new Note() { Title = noteDto.Title, Content = noteDto.Content };
+            var note = new Note() { Title = noteDtoAdd.Title, Content = noteDtoAdd.Content, Status = noteDtoAdd.Status };
 
             if (!_validator.Validate(note).IsValid)
                 return UnprocessableEntity();
 
-            var addedNoteId = await _service.Add(note);
+            var addedNote = await _service.Add(note);
 
-            return Created(new Uri("api/v1/notes/", UriKind.Relative), addedNoteId);
+            return Created(new Uri("api/v1/notes/", UriKind.Relative), addedNote);
         }
 
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> UpdateNote([FromBody] NoteDtoUpdate noteDtoUpdate)
         {
-            var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content };
+            var note = new Note() { Id = noteDtoUpdate.Id, Title = noteDtoUpdate.Title, Content = noteDtoUpdate.Content, Status = noteDtoUpdate.Status };
             var validationResult = _validator.Validate(note);
             var isValidId = note.Id >= 1;
 
@@ -90,9 +90,15 @@ namespace Abdt.Loyal.NoteSaver.Controllers
         [Route("addTest")]
         public async Task<IActionResult> AddTestNotes([FromQuery] ushort count)
         {
+            var random = new Random();
             foreach (var item in Enumerable.Range(0, count))
             {
-                var note = new Note() { Title = $"NoteTitle: {item.ToString()}", Content = $"Content: text-{Guid.NewGuid().ToString()}" };
+                var note = new Note() 
+                { 
+                    Title = $"NoteTitle: {item.ToString()}", 
+                    Content = $"Content: text-{Guid.NewGuid().ToString()}",
+                    Status = (NoteStatus)random.Next(Enum.GetValues(typeof(NoteStatus)).Length)
+                };
                 _ = await _service.Add(note);
             }
 

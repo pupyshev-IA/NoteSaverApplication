@@ -5,7 +5,7 @@ services:
     image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
     build:
       context: .
-      dockerfile: Abdt.Loyal.NoteSaver/Dockerfile
+      dockerfile: NoteSaverApplication/Dockerfile
     ports:
       - "5000:5000"
     expose:
@@ -61,3 +61,26 @@ services:
       - 8001:8001
     depends_on:
       - redis
+
+  abdt.loyal.notesaver:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaver
+    build:
+      context: .
+      dockerfile: Abdt.Loyal.NoteSaver/Dockerfile
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
+    depends_on:
+      - postgres
+      - redis
+
+  abdt.loyal.notesaver.web.server:
+    image: ${DOCKER_REGISTRY-}abdtloyalnotesaverwebserver
+    build:
+      context: .
+      dockerfile: Abdt.Loyal.NoteSaver.Web/Server/Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - abdt.loyal.notesaver

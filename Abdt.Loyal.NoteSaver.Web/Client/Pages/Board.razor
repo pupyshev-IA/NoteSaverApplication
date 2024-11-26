@@ -1,0 +1,164 @@
+﻿@page "/workspace/board"
+
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+
+<MudContainer Class="mt-2">
+    <MudPaper Class="py-3" Elevation="0">
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h4" Class="px-4">Board</MudText>
+            <MudStack Row Justify="Justify.FlexStart">
+                <MudSelect T="string" @bind-Value="_selectedGoal" Label="Your goals" Variant="Variant.Text">
+                    @foreach (var goal in _goals)
+                    {
+                        <MudSelectItem Value="goal" />
+                    }
+                </MudSelect>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+
+    <MudText Typo="Typo.h5">@(_selectedGoal is null ? " " : $"Name of the {_selectedGoal}")</MudText>
+    <MudDropContainer T="KanbanTaskItem" @ref="_dropContainer" Items="@_tasks" ItemsSelector="@((task, column) => task.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row">
+        <ChildContent>
+            @foreach (var item in _sections)
+            {
+                <MudPaper Elevation="0" Width="400px" MinHeight="600px" Class="pa-4 ma-4 d-flex flex-column rounded-lg" Style="@($"background: {item.Color}")">
+                    <MudToolBar DisableGutters="true">
+                        <MudText Typo="Typo.subtitle1"><b>@item.Name</b></MudText>
+                        <MudSpacer />
+                        <MudMenu Icon="@Icons.Material.Rounded.MoreHoriz" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25">
+                            <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" OnClick="@( () => DeleteSection(item))">Delete Section</MudButton>
+                            <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Rounded.Edit">Rename Section</MudButton>
+                        </MudMenu>
+                    </MudToolBar>
+                    <MudDropZone T="KanbanTaskItem" Identifier="@item.Name" Class="mud-height-full" Style="min-height: 50px" />
+                    @if (item.NewTaskOpen)
+                    {
+                        <MudPaper Elevation="25" Class="pa-2 rounded-lg">
+                            <MudTextField @bind-Value="item.NewTaskName" Placeholder="New Task" DisableUnderLine="true" Margin="Margin.Dense" Class="mx-2 mt-n2"></MudTextField>
+                            <MudButton OnClick="@(() => AddTask(item))" Size="Size.Small" Color="Color.Primary" FullWidth="true">Add Task</MudButton>
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudButton OnClick="@(() => item.NewTaskOpen = !item.NewTaskOpen)" StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Class="rounded-lg py-2">Add Task</MudButton>
+                    }
+                </MudPaper>
+            }
+            <MudPaper Class="pa-4" Elevation="0" Width="400px">
+                @if (_addSectionOpen)
+                {
+                    <MudPaper Elevation="0" Width="210px" Class="pa-4 d-flex flex-column mud-background-gray rounded-lg">
+                        <EditForm Model="@newSectionModel" OnValidSubmit="OnValidSectionSubmit">
+                            <DataAnnotationsValidator />
+                            <MudTextField @bind-Value="newSectionModel.Name" For="@(() => newSectionModel.Name)" Placeholder="New Section" DisableUnderLine="true"></MudTextField>
+                            <MudButton ButtonType="ButtonType.Submit" Size="Size.Small" Color="Color.Primary" FullWidth="true">Add Section</MudButton>
+                        </EditForm>
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudButton OnClick="() => _addSectionOpen = true" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Class="rounded-lg py-2" FullWidth="true">Add Section</MudButton>
+                }
+            </MudPaper>
+        </ChildContent>
+        <ItemRenderer>
+            <MudPaper Elevation="25" Class="pa-4 rounded-lg my-3">@context.Name</MudPaper>
+        </ItemRenderer>
+    </MudDropContainer>
+</MudContainer>
+
+@code
+{
+    public class KanBanSections
+    {
+        public string Name { get; set; }
+
+        public bool NewTaskOpen { get; set; }
+
+        public string NewTaskName { get; set; }
+
+        public string Color { get; set; }
+    }
+
+    public class KanbanTaskItem
+    {
+        public string Name { get; set; }
+
+        public string Status { get; set; }
+    }
+
+    public class KanBanNewForm
+    {
+        [Required]
+        [StringLength(30, ErrorMessage = "Name length can't be more than 30.")]
+        public string Name { get; set; }
+    }
+
+
+    KanBanNewForm newSectionModel = new KanBanNewForm();
+    private MudDropContainer<KanbanTaskItem> _dropContainer;
+    private bool _addSectionOpen;
+    private string _selectedGoal;
+
+    private List<KanBanSections> _sections = new()
+        {
+            new KanBanSections { Name = "To Do", NewTaskOpen = false, NewTaskName = String.Empty, Color = Colors.Blue.Lighten5 },
+            new KanBanSections { Name = "In Process", NewTaskOpen = false, NewTaskName = String.Empty, Color = Colors.Orange.Lighten5 },
+            new KanBanSections { Name = "Done", NewTaskOpen = false, NewTaskName = String.Empty, Color = Colors.Green.Lighten5 },
+        };
+
+    private List<KanbanTaskItem> _tasks = new()
+        {
+            new KanbanTaskItem { Name = "Write unit test", Status = "To Do" },
+            new KanbanTaskItem { Name = "Document work", Status = "To Do" },
+            new KanbanTaskItem { Name = "Go to shop", Status = "To Do" },
+        };
+
+    private List<string> _goals = new() { "Task 1", "Task 2","Task 3", "Task 4", "Task 5" };
+
+
+    private void TaskUpdated(MudItemDropInfo<KanbanTaskItem> info) =>
+        info.Item.Status = info.DropzoneIdentifier;
+
+    private void OnValidSectionSubmit(EditContext context)
+    {
+        _sections.Add(new KanBanSections { Name = newSectionModel.Name, NewTaskOpen = false, NewTaskName = String.Empty, Color = Colors.Red.Lighten5 });
+        newSectionModel.Name = string.Empty;
+        _addSectionOpen = false;
+    }
+
+    private void AddTask(KanBanSections section)
+    {
+        _tasks.Add(new KanbanTaskItem { Name = section.NewTaskName, Status = section.Name });
+        section.NewTaskName = string.Empty;
+        section.NewTaskOpen = false;
+        _dropContainer.Refresh();
+    }
+
+    private void DeleteSection(KanBanSections section)
+    {
+        if (_sections.Count == 1)
+        {
+            _tasks.Clear();
+            _sections.Clear();
+        }
+        else
+        {
+            int newIndex = _sections.IndexOf(section) - 1;
+            if (newIndex < 0) newIndex = 0;
+            newIndex = newIndex < 0 ? 0 : newIndex;
+
+            var tasks = _tasks.Where(x => x.Status == section.Name);
+            foreach (var item in tasks)
+            {
+                item.Status = _sections[newIndex].Name;
+            }
+
+            _sections.Remove(section);
+            _dropContainer.Refresh();
+        }
+    }
+}
